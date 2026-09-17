@@ -3,14 +3,15 @@
 Provee la conexión (reutilizada por request vía Flask ``g``), su cierre
 y la inicialización del esquema con datos de ejemplo.
 
-Hallazgos incluidos a propósito:
-    - B324 (Bandit): uso de MD5 para sembrar la contraseña del admin.
+Corregido:
+    - B324 (Bandit): la contraseña del admin se siembra con PBKDF2
+      (``generate_password_hash`` de werkzeug), nunca con MD5.
 """
 
-import hashlib
 import sqlite3
 
 from flask import g
+from werkzeug.security import generate_password_hash
 
 from config import DB_PATH
 
@@ -31,11 +32,7 @@ def close_db(exc=None):
 
 
 def init_db():
-    """Crea las tablas si no existen y agrega datos de ejemplo.
-
-    VULNERABILIDAD / Hallazgo B324 (Bandit), K0703 (OWASP): la clave del
-    admin se siembra con MD5, algoritmo criptográficamente roto.
-    """
+    """Crea las tablas si no existen y agrega datos de ejemplo."""
     db = sqlite3.connect(DB_PATH)
     db.executescript(
         """
@@ -55,10 +52,10 @@ def init_db():
     )
     cur = db.cursor()
     if cur.execute("SELECT COUNT(*) FROM usuarios").fetchone()[0] == 0:
-        # B324 (Bandit): MD5 prohibido para almacenar contraseñas.
         db.execute(
             "INSERT INTO usuarios (usuario, hash_clave) VALUES (?, ?)",
-            ("admin", hashlib.md5(b"admin123").hexdigest()),
+            # PBKDF2 con salt automático: recomendado para almacenar claves.
+            ("admin", generate_password_hash("admin123")),
         )
     if cur.execute("SELECT COUNT(*) FROM productos").fetchone()[0] == 0:
         db.executemany(

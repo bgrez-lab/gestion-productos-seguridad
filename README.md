@@ -40,14 +40,18 @@ Abrir http://127.0.0.1:5000. Usuario por defecto: `admin` / `admin123`.
 | **Pip-audit** | Dependencias | `pip install pip-audit` | `pip-audit -r requirements.txt` |
 | **Claude (IA)** | Code review por IA | Conversación guiada | Revisión línea a línea con hallazgos y correcciones (ver `evidencia/revision_claude.md`) |
 
-### Resultados principales (versión vulnerable)
+### Resultados antes / después de corregir
 
-- **Bandit:** 6 hallazgos (MD5, inyección SQL, secreto embebido, debug, credenciales).
-- **Semgrep:** 16 hallazgos (inyección SQL, debug, NaN injection, CSRF, etc.).
-- **SonarCloud:** 9 issues — 8 vulnerabilidades (2 bloqueantes/críticas) + 1 bug. Quality Gate ROJO.
-- **Claude:** 14 hallazgos (vulnerabilidades, errores y malas prácticas).
+| Herramienta | Versión vulnerable | Versión corregida |
+|---|---|---|
+| **Bandit** | 6 hallazgos (MD5, SQLi, secreto, debug) | **0 hallazgos** |
+| **Semgrep** | 16 hallazgos | **4** (falsos positivos de reglas Django sobre plantillas Flask) |
+| **SonarCloud** | 9 issues (8 vulnerabilidades) | Quality Gate **OK** |
+| **Pylint** | 9.46/10 | **9.94/10** |
+| **Claude (IA)** | 14 hallazgos | 0 en las categorías corregidas |
 
-Ver `evidencia/` con los reportes y `informe.md` con el análisis completo.
+Reportes exportados en `evidencia/` (`semgrep_scan.json`, `semgrep_scan_corregido.json`,
+`bandit_corregido.json`, `sonarcloud_issues.json`, `revision_claude.md`).
 
 ## Estructura
 

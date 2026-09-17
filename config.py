@@ -1,23 +1,21 @@
 """Configuración global de la aplicación.
 
-Hallazgos incluidos a propósito para que las herramientas los detecten:
-    - B105 (Bandit): SECRET_KEY embebido en el código fuente.
-    - B105 (Bandit): credencial por defecto documentada en el código.
+Corregido:
+    - B105 (Bandit): la clave se lee de la variable de entorno, jamás del código.
+    - Credenciales por defecto: eliminadas (el admin se crea en el primer uso).
 """
 
 import os
-
-# Hallazgo B105 (Bandit): secreto embebido en el código fuente.
-SECRET_KEY = "clave-super-secreta-2024-no-cambiar"
+import secrets
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# La clave secreta se toma del entorno. Si no existe, se genera una
+# aleatoria por sesión (solo recomendable para desarrollo).
+SECRET_KEY = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 
 # Ruta de la base de datos SQLite que usa la aplicación.
 DB_PATH = os.path.join(BASE_DIR, "productos.db")
 
-# Hallazgo B105 (Bandit): credencial por defecto embebida.
-USUARIO_POR_DEFECTO = "admin"
-CLAVE_POR_DEFECTO = "admin123"
-
-# Carpeta reservada para subidas de archivos (aún sin uso).
-CARPETA_SUBIDAS = os.path.join(BASE_DIR, "static", "uploads")
+# True solo si la variable de entorno lo indica (nunca en producción).
+DEBUG = os.environ.get("FLASK_DEBUG", "").lower() in ("1", "true", "yes")

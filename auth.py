@@ -1,9 +1,13 @@
 """Blueprint de autenticación: registro, inicio de sesión y cierre.
 
-Hallazgos incluidos a propósito:
-    - B324 (Bandit): MD5 para almacenar las contraseñas.
-    - B608 (Bandit): inyección SQL por concatenación en el login.
+Correcciones aplicadas:
+    - B324 (Bandit): MD5 reemplazado por PBKDF2 (werkzeug).
+    - B608 (Bandit): consulta SQL parametrizada (se elimina la inyección).
+    - C9 (revisión IA): el login redirige al listado, no otra vez al login.
+    - W0703 (pylint): se captura solo sqlite3.IntegrityError.
 """
+
+import sqlite3
 
 from flask import (
     Blueprint,
@@ -14,40 +18,33 @@ from flask import (
     session,
     url_for,
 )
-import hashlib
+
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from database import get_db
 
 auth_bp = Blueprint("auth", __name__)
 
 
-def hash_clave_plana(clave):
-    """Devuelve el hash MD5 de una contraseña.
-
-    VULNERABILIDAD (Bandit B324 / OWASP K0703): MD5 es un algoritmo
-    criptográficamente roto y no debe usarse para almacenar claves.
-    """
-    return hashlib.md5(clave.encode("utf-8")).hexdigest()
-
-
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     """Valida credenciales e inicia la sesión del usuario."""
     if request.method == "POST":
-        usuario = request.form.get("usuario", "")
+        usuario = request.form.get("usuario", "").strip()
         clave = request.form.get("clave", "")
 
-        # VULNERABILIDAD (Bandit B608): SQL armado por concatenación.
+        # Consulta parametrizada: el dato del usuario nunca se concatena.
         db = get_db()
-        consulta = (
-            "SELECT * FROM usuarios WHERE usuario = '%s' AND hash_clave = '%s'"
-            % (usuario, hash_clave_plana(clave))
-        )
-        fila = db.execute(consulta).fetchone()
-        if fila:
+        fila = db.execute(
+            "SELECT * FROM usuarios WHERE usuario = ?", (usuario,)
+        ).fetchone()
+
+        # Verificación con hash seguro (PBKDF2) y salt automático.
+        if fila and check_password_hash(fila["hash_clave"], clave):
+            session.clear()  # evita fijación de sesión
             session["usuario"] = fila["usuario"]
             session["usuario_id"] = fila["id"]
-            return redirect(url_for("auth.login"))
+            return redirect(url_for("productos.listar"))
         flash("Usuario o contraseña incorrectos.")
     return render_template("login.html")
 
@@ -56,21 +53,24 @@ def login():
 def registro():
     """Registra un nuevo usuario en el sistema."""
     if request.method == "POST":
-        usuario = request.form.get("usuario", "")
+        usuario = request.form.get("usuario", "").strip()
         clave = request.form.get("clave", "")
         if not usuario or not clave:
             flash("Usuario y contraseña son obligatorios.")
+            return render_template("registro.html")
+        if len(clave) < 8:
+            flash("La contraseña debe tener al menos 8 caracteres.")
             return render_template("registro.html")
 
         db = get_db()
         try:
             db.execute(
                 "INSERT INTO usuarios (usuario, hash_clave) VALUES (?, ?)",
-                (usuario, hash_clave_plana(clave)),
+                (usuario, generate_password_hash(clave)),
             )
             db.commit()
-        except Exception:
-            # W0703 (pylint): captura demasiado amplia, enmascara el error.
+        except sqlite3.IntegrityError:
+            # Única excepción esperada: el usuario ya existe.
             flash("El nombre de usuario ya existe.")
             return render_template("registro.html")
         flash("Registro correcto, ya puede iniciar sesión.")

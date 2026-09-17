@@ -5,7 +5,6 @@
         "severity":  "MAJOR",
         "component":  "bgrez-lab_gestion-productos-seguridad:.github/workflows/sonarcloud.yml",
         "project":  "bgrez-lab_gestion-productos-seguridad",
-        "line":  24,
         "hash":  "fe3aa2a3a6a2d36f2639038424d9e73c",
         "textRange":  {
                           "startLine":  24,
@@ -16,7 +15,8 @@
         "flows":  [
 
                   ],
-        "status":  "OPEN",
+        "resolution":  "FIXED",
+        "status":  "CLOSED",
         "message":  "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
         "effort":  "1h",
         "debt":  "1h",
@@ -25,7 +25,8 @@
                      "cwe"
                  ],
         "creationDate":  "2026-09-17T21:47:41+0000",
-        "updateDate":  "2026-09-17T21:58:17+0000",
+        "updateDate":  "2026-09-17T22:07:46+0000",
+        "closeDate":  "2026-09-17T22:07:46+0000",
         "type":  "VULNERABILITY",
         "organization":  "bgrez-lab",
         "cleanCodeAttribute":  "TRUSTWORTHY",
@@ -36,12 +37,12 @@
                             "severity":  "MEDIUM"
                         }
                     ],
-        "issueStatus":  "OPEN",
+        "issueStatus":  "FIXED",
         "projectName":  "gestion-productos-seguridad",
         "internalTags":  [
 
                          ],
-        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeAnalysisUuid":  "71ce00ab-b119-427d-84d1-3cc1f2ec411c",
         "lastChangeSource":  "ANALYSIS"
     },
     {
@@ -50,7 +51,6 @@
         "severity":  "MAJOR",
         "component":  "bgrez-lab_gestion-productos-seguridad:.github/workflows/sonarcloud.yml",
         "project":  "bgrez-lab_gestion-productos-seguridad",
-        "line":  24,
         "hash":  "fe3aa2a3a6a2d36f2639038424d9e73c",
         "textRange":  {
                           "startLine":  24,
@@ -61,7 +61,8 @@
         "flows":  [
 
                   ],
-        "status":  "OPEN",
+        "resolution":  "FIXED",
+        "status":  "CLOSED",
         "message":  "Using dependencies without locking resolved versions is security-sensitive.",
         "effort":  "1h",
         "debt":  "1h",
@@ -70,7 +71,8 @@
 
                  ],
         "creationDate":  "2026-09-17T21:47:41+0000",
-        "updateDate":  "2026-09-17T21:58:17+0000",
+        "updateDate":  "2026-09-17T22:07:46+0000",
+        "closeDate":  "2026-09-17T22:07:46+0000",
         "type":  "VULNERABILITY",
         "organization":  "bgrez-lab",
         "cleanCodeAttribute":  "COMPLETE",
@@ -81,12 +83,12 @@
                             "severity":  "MEDIUM"
                         }
                     ],
-        "issueStatus":  "OPEN",
+        "issueStatus":  "FIXED",
         "projectName":  "gestion-productos-seguridad",
         "internalTags":  [
 
                          ],
-        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeAnalysisUuid":  "71ce00ab-b119-427d-84d1-3cc1f2ec411c",
         "lastChangeSource":  "ANALYSIS"
     },
     {
@@ -95,7 +97,6 @@
         "severity":  "MAJOR",
         "component":  "bgrez-lab_gestion-productos-seguridad:.github/workflows/sonarcloud.yml",
         "project":  "bgrez-lab_gestion-productos-seguridad",
-        "line":  27,
         "hash":  "7ac170b6aaa60722c50d1bd07a27e758",
         "textRange":  {
                           "startLine":  27,
@@ -106,7 +107,8 @@
         "flows":  [
 
                   ],
-        "status":  "OPEN",
+        "resolution":  "FIXED",
+        "status":  "CLOSED",
         "message":  "Use full commit SHA hash for this dependency.",
         "effort":  "30min",
         "debt":  "30min",
@@ -116,7 +118,8 @@
                      "former-hotspot"
                  ],
         "creationDate":  "2026-09-17T21:47:41+0000",
-        "updateDate":  "2026-09-17T21:58:17+0000",
+        "updateDate":  "2026-09-17T22:07:46+0000",
+        "closeDate":  "2026-09-17T22:07:46+0000",
         "type":  "VULNERABILITY",
         "organization":  "bgrez-lab",
         "cleanCodeAttribute":  "TRUSTWORTHY",
@@ -127,12 +130,12 @@
                             "severity":  "HIGH"
                         }
                     ],
-        "issueStatus":  "OPEN",
+        "issueStatus":  "FIXED",
         "projectName":  "gestion-productos-seguridad",
         "internalTags":  [
 
                          ],
-        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeAnalysisUuid":  "71ce00ab-b119-427d-84d1-3cc1f2ec411c",
         "lastChangeSource":  "ANALYSIS"
     },
     {
