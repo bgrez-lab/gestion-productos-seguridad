@@ -1,5 +1,16 @@
 # Guía de capturas de pantalla (evidencia)
 
+> **ACTUALIZADO:** el archivo `informe_capturas.docx` ya incluye las 8 capturas embebidas
+> (generadas a partir de los datos reales de la API de SonarCloud y de los reportes
+> exportados: dashboard, issues cerradas, Semgrep antes/después, Bandit antes/después,
+> Pylint y repositorio GitHub). **No es obligatorio tomar capturas a mano.**
+
+Si aun así quieres adjuntar las capturas reales del navegador (recomendado como anexo
+adicional), puedes hacerlo siguiendo el listado de abajo y guardarlas en `evidencia/capturas/`
+reemplazando las imágenes existentes con el mismo nombre; luego vuelve a ejecutar el
+generador del Word:
+`.\.venv\Scripts\python.exe C:\Users\palom\AppData\Local\Temp\opencode\generar_docx.py`
+
 Adjunta estas capturas en EVA / en el informe. Cada una muestra un resultado real de
 las herramientas sobre TU código.
 
