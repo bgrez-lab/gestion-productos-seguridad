@@ -195,7 +195,7 @@ registrar los problemas detectados.</p>
 <tr>
 <td>Semgrep</td>
 <td><strong>16</strong></td>
-<td>9 error / 7 warning</td>
+<td>8 error / 8 warning</td>
 <td><code>evidencia/semgrep_scan.json</code></td>
 </tr>
 <tr>
@@ -546,7 +546,64 @@ excepción demasiado amplia (<code>auth.py:72</code>, <code>productos.py:66,91</
 entrada (nombres vacíos, claves triviales); C13 sesión sin renovación ni cookie <code>Secure</code>/<code>SameSite</code>;
 C14 sin límite de intentos de login (fuerza bruta).</p>
 <hr />
-<h2>6. Análisis de los problemas registrados</h2>
+<h2>6. Evidencia generada (capturas de las fuentes reales)</h2>
+<p>Las capturas se tomaron de la <strong>página oficial</strong> de SonarCloud (URL pública del proyecto) y del
+repositorio en <strong>GitHub</strong>, además de las <strong>salidas reales</strong> de las herramientas locales ejecutadas
+sobre el código original:</p>
+<table>
+<thead>
+<tr>
+<th>Captura</th>
+<th>Fuente (dónde se ejecuta)</th>
+<th>Muestra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>evidencia/capturas/captura_sonar_overview.png</code></td>
+<td>sonarcloud.io (página oficial)</td>
+<td>Overview del proyecto: el programa original con 6 issues abiertas</td>
+</tr>
+<tr>
+<td><code>evidencia/capturas/captura_sonar_issues.png</code></td>
+<td>sonarcloud.io (página oficial)</td>
+<td>Lista de las 6 issues abiertas (<code>resolved=false</code>)</td>
+</tr>
+<tr>
+<td><code>evidencia/capturas/captura_quality_gate.png</code></td>
+<td>sonarcloud.io (página oficial)</td>
+<td>Condiciones del Quality Gate</td>
+</tr>
+<tr>
+<td><code>evidencia/capturas/captura_github_repo.png</code></td>
+<td>github.com (página oficial)</td>
+<td>Repositorio con el código original en <code>main</code></td>
+</tr>
+<tr>
+<td><code>evidencia/capturas/captura_semgrep_antes.png</code></td>
+<td>Ejecución local (terminal)</td>
+<td>Salida real de <code>semgrep scan</code> sobre el código original (16 hallazgos)</td>
+</tr>
+<tr>
+<td><code>evidencia/capturas/captura_bandit_antes.png</code></td>
+<td>Ejecución local (terminal)</td>
+<td>Salida real de <code>bandit</code> sobre el código original (7 hallazgos)</td>
+</tr>
+<tr>
+<td><code>evidencia/capturas/captura_pylint.png</code></td>
+<td>Ejecución local (terminal)</td>
+<td>Salida real de <code>pylint</code> (9.46/10)</td>
+</tr>
+</tbody>
+</table>
+<p>URLs oficiales:</p>
+<ul>
+<li>https://sonarcloud.io/project/overview?id=bgrez-lab_gestion-productos-seguridad</li>
+<li>https://sonarcloud.io/project/issues?id=bgrez-lab_gestion-productos-seguridad&amp;resolved=false</li>
+<li>https://github.com/bgrez-lab/gestion-productos-seguridad</li>
+</ul>
+<hr />
+<h2>7. Análisis de los problemas registrados</h2>
 <p>Agrupando los hallazgos de las cuatro fuentes (se contó cada problema real una sola vez):</p>
 <table>
 <thead>
@@ -613,7 +670,7 @@ principales de OWASP (A01-A07), siendo los más graves la criptografía rota y l
 SQL explotables (permite acceder como <em>admin</em> con <code>' OR '1'='1</code> sin contraseña). Ninguna prueba
 funcional "normal" los detectaría; solo el análisis estático y la revisión sistemática.</p>
 <hr />
-<h2>7. Reflexión sobre las herramientas (aprendizaje)</h2>
+<h2>8. Reflexión sobre las herramientas (aprendizaje)</h2>
 <ol>
 <li><strong>Se complementan:</strong> Bandit detectó los 7 problemas de seguridad Python de un vistazo;
    Semgrep amplió con NaN injection y CSRF; SonarCloud dio el mapa completo con severidades y
@@ -626,7 +683,7 @@ funcional "normal" los detectaría; solo el análisis estático y la revisión s
    mismas issues, confirmando la validez del registro.</li>
 </ol>
 <hr />
-<h2>8. Conclusiones</h2>
+<h2>9. Conclusiones</h2>
 <ol>
 <li><strong>El análisis estático encuentra lo que las pruebas funcionales no ven.</strong> El programa "funcionaba",
    pero contenía criptografía rota y dos inyecciones SQL explotables (acceso como <em>admin</em> sin clave).</li>
@@ -640,7 +697,7 @@ funcional "normal" los detectaría; solo el análisis estático y la revisión s
 <li><strong>Automatizar el análisis</strong> (SonarCloud en cada push) convierte la seguridad en un proceso continuo.</li>
 </ol>
 <hr />
-<h2>9. Referencias</h2>
+<h2>10. Referencias</h2>
 <ul>
 <li>Bandit — PyCQA: https://bandit.readthedocs.io/ — https://github.com/PyCQA/bandit</li>
 <li>Semgrep: https://semgrep.dev/docs/ — reglas: https://semgrep.dev/explore</li>

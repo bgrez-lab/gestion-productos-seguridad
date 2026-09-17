@@ -117,7 +117,7 @@ registrar los problemas detectados.
 | Herramienta | Hallazgos | Severidades destacadas | Reporte |
 |---|---|---|---|
 | Bandit | **7** | 3 High · 3 Medium · 1 Low | `evidencia/bandit_antes.json` |
-| Semgrep | **16** | 9 error / 7 warning | `evidencia/semgrep_scan.json` |
+| Semgrep | **16** | 8 error / 8 warning | `evidencia/semgrep_scan.json` |
 | SonarCloud | **6** | 1 Blocker · 2 Critical · 1 Major(MINOR) · 2 Major | `evidencia/sonarcloud_issues.json` |
 | IA (Claude) | **14** | 3 crítica · 4 alta · 2 media · 5 baja | `evidencia/revision_claude.md` |
 
@@ -197,7 +197,31 @@ C14 sin límite de intentos de login (fuerza bruta).
 
 ---
 
-## 6. Análisis de los problemas registrados
+## 6. Evidencia generada (capturas de las fuentes reales)
+
+Las capturas se tomaron de la **página oficial** de SonarCloud (URL pública del proyecto) y del
+repositorio en **GitHub**, además de las **salidas reales** de las herramientas locales ejecutadas
+sobre el código original:
+
+| Captura | Fuente (dónde se ejecuta) | Muestra |
+|---|---|---|
+| `evidencia/capturas/captura_sonar_overview.png` | sonarcloud.io (página oficial) | Overview del proyecto: el programa original con 6 issues abiertas |
+| `evidencia/capturas/captura_sonar_issues.png` | sonarcloud.io (página oficial) | Lista de las 6 issues abiertas (`resolved=false`) |
+| `evidencia/capturas/captura_quality_gate.png` | sonarcloud.io (página oficial) | Condiciones del Quality Gate |
+| `evidencia/capturas/captura_github_repo.png` | github.com (página oficial) | Repositorio con el código original en `main` |
+| `evidencia/capturas/captura_semgrep_antes.png` | Ejecución local (terminal) | Salida real de `semgrep scan` sobre el código original (16 hallazgos) |
+| `evidencia/capturas/captura_bandit_antes.png` | Ejecución local (terminal) | Salida real de `bandit` sobre el código original (7 hallazgos) |
+| `evidencia/capturas/captura_pylint.png` | Ejecución local (terminal) | Salida real de `pylint` (9.46/10) |
+
+URLs oficiales:
+
+- https://sonarcloud.io/project/overview?id=bgrez-lab_gestion-productos-seguridad
+- https://sonarcloud.io/project/issues?id=bgrez-lab_gestion-productos-seguridad&resolved=false
+- https://github.com/bgrez-lab/gestion-productos-seguridad
+
+---
+
+## 7. Análisis de los problemas registrados
 
 Agrupando los hallazgos de las cuatro fuentes (se contó cada problema real una sola vez):
 
@@ -219,7 +243,7 @@ funcional "normal" los detectaría; solo el análisis estático y la revisión s
 
 ---
 
-## 7. Reflexión sobre las herramientas (aprendizaje)
+## 8. Reflexión sobre las herramientas (aprendizaje)
 
 1. **Se complementan:** Bandit detectó los 7 problemas de seguridad Python de un vistazo;
    Semgrep amplió con NaN injection y CSRF; SonarCloud dio el mapa completo con severidades y
@@ -233,7 +257,7 @@ funcional "normal" los detectaría; solo el análisis estático y la revisión s
 
 ---
 
-## 8. Conclusiones
+## 9. Conclusiones
 
 1. **El análisis estático encuentra lo que las pruebas funcionales no ven.** El programa "funcionaba",
    pero contenía criptografía rota y dos inyecciones SQL explotables (acceso como *admin* sin clave).
@@ -248,7 +272,7 @@ funcional "normal" los detectaría; solo el análisis estático y la revisión s
 
 ---
 
-## 9. Referencias
+## 10. Referencias
 
 - Bandit — PyCQA: https://bandit.readthedocs.io/ — https://github.com/PyCQA/bandit
 - Semgrep: https://semgrep.dev/docs/ — reglas: https://semgrep.dev/explore

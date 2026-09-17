@@ -1,6 +1,6 @@
-﻿{
+{
   "errors": [],
-  "generated_at": "2026-09-17T22:17:46Z",
+  "generated_at": "2026-09-17T22:52:09Z",
   "metrics": {
     ".\\app.py": {
       "CONFIDENCE.HIGH": 0,
