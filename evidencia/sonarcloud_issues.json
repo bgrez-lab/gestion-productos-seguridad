@@ -1,0 +1,423 @@
+﻿[
+    {
+        "key":  "AaCxYOMPCrXg5OrsAveI",
+        "rule":  "githubactions:S8541",
+        "severity":  "MAJOR",
+        "component":  "bgrez-lab_gestion-productos-seguridad:.github/workflows/sonarcloud.yml",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  24,
+        "hash":  "fe3aa2a3a6a2d36f2639038424d9e73c",
+        "textRange":  {
+                          "startLine":  24,
+                          "endLine":  24,
+                          "startOffset":  13,
+                          "endOffset":  24
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Omitting \"--only-binary :all:\" can lead to the execution of setup scripts. Make sure it is safe here.",
+        "effort":  "1h",
+        "debt":  "1h",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "cwe"
+                 ],
+        "creationDate":  "2026-09-17T21:47:41+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "TRUSTWORTHY",
+        "cleanCodeAttributeCategory":  "RESPONSIBLE",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "MEDIUM"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMPCrXg5OrsAveJ",
+        "rule":  "githubactions:S8544",
+        "severity":  "MAJOR",
+        "component":  "bgrez-lab_gestion-productos-seguridad:.github/workflows/sonarcloud.yml",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  24,
+        "hash":  "fe3aa2a3a6a2d36f2639038424d9e73c",
+        "textRange":  {
+                          "startLine":  24,
+                          "endLine":  24,
+                          "startOffset":  13,
+                          "endOffset":  44
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Using dependencies without locking resolved versions is security-sensitive.",
+        "effort":  "1h",
+        "debt":  "1h",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+
+                 ],
+        "creationDate":  "2026-09-17T21:47:41+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "COMPLETE",
+        "cleanCodeAttributeCategory":  "INTENTIONAL",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "MEDIUM"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMPCrXg5OrsAveK",
+        "rule":  "githubactions:S7637",
+        "severity":  "MAJOR",
+        "component":  "bgrez-lab_gestion-productos-seguridad:.github/workflows/sonarcloud.yml",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  27,
+        "hash":  "7ac170b6aaa60722c50d1bd07a27e758",
+        "textRange":  {
+                          "startLine":  27,
+                          "endLine":  27,
+                          "startOffset":  14,
+                          "endOffset":  50
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Use full commit SHA hash for this dependency.",
+        "effort":  "30min",
+        "debt":  "30min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "cwe",
+                     "former-hotspot"
+                 ],
+        "creationDate":  "2026-09-17T21:47:41+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "TRUSTWORTHY",
+        "cleanCodeAttributeCategory":  "RESPONSIBLE",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "HIGH"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMKCrXg5OrsAveF",
+        "rule":  "python:S4502",
+        "severity":  "CRITICAL",
+        "component":  "bgrez-lab_gestion-productos-seguridad:app.py",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  17,
+        "hash":  "179643042db29a9995dc460d16749c31",
+        "textRange":  {
+                          "startLine":  17,
+                          "endLine":  17,
+                          "startOffset":  6,
+                          "endOffset":  21
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Make sure disabling CSRF protection is safe here.",
+        "effort":  "5min",
+        "debt":  "5min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "cwe",
+                     "django",
+                     "flask",
+                     "former-hotspot"
+                 ],
+        "creationDate":  "2026-09-17T21:36:33+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "CONVENTIONAL",
+        "cleanCodeAttributeCategory":  "CONSISTENT",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "HIGH"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMKCrXg5OrsAveG",
+        "rule":  "python:S8392",
+        "severity":  "BLOCKER",
+        "component":  "bgrez-lab_gestion-productos-seguridad:app.py",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  44,
+        "hash":  "7af35d3693ab3045ad1e5fd5339944d5",
+        "textRange":  {
+                          "startLine":  44,
+                          "endLine":  44,
+                          "startOffset":  4,
+                          "endOffset":  11
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Avoid binding the application to all network interfaces.",
+        "effort":  "5min",
+        "debt":  "5min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "deployment",
+                     "fastapi",
+                     "flask",
+                     "least-privilege",
+                     "network",
+                     "uvicorn"
+                 ],
+        "creationDate":  "2026-09-17T21:36:33+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "CONVENTIONAL",
+        "cleanCodeAttributeCategory":  "CONSISTENT",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "BLOCKER"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMKCrXg5OrsAveH",
+        "rule":  "python:S4507",
+        "severity":  "MINOR",
+        "component":  "bgrez-lab_gestion-productos-seguridad:app.py",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  44,
+        "hash":  "7af35d3693ab3045ad1e5fd5339944d5",
+        "textRange":  {
+                          "startLine":  44,
+                          "endLine":  44,
+                          "startOffset":  39,
+                          "endOffset":  49
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Make sure this debug feature is deactivated before delivering the code in production.",
+        "effort":  "1min",
+        "debt":  "1min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "cwe",
+                     "debug",
+                     "error-handling",
+                     "former-hotspot",
+                     "user-experience"
+                 ],
+        "creationDate":  "2026-09-17T21:36:33+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "CONVENTIONAL",
+        "cleanCodeAttributeCategory":  "CONSISTENT",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "LOW"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMbCrXg5OrsAveM",
+        "rule":  "python:S4790",
+        "severity":  "CRITICAL",
+        "component":  "bgrez-lab_gestion-productos-seguridad:auth.py",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  30,
+        "hash":  "077327859f59170eb03ccc2d5be6f3b9",
+        "textRange":  {
+                          "startLine":  30,
+                          "endLine":  30,
+                          "startOffset":  19,
+                          "endOffset":  22
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Make sure that hashing data is safe here.",
+        "effort":  "30min",
+        "debt":  "30min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "cwe",
+                     "former-hotspot"
+                 ],
+        "creationDate":  "2026-09-17T21:36:33+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "TRUSTWORTHY",
+        "cleanCodeAttributeCategory":  "RESPONSIBLE",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "HIGH"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOMVCrXg5OrsAveL",
+        "rule":  "python:S4790",
+        "severity":  "CRITICAL",
+        "component":  "bgrez-lab_gestion-productos-seguridad:database.py",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  61,
+        "hash":  "a07b190a9e25fb9b950513f8e248c350",
+        "textRange":  {
+                          "startLine":  61,
+                          "endLine":  61,
+                          "startOffset":  30,
+                          "endOffset":  33
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Make sure that hashing data is safe here.",
+        "effort":  "30min",
+        "debt":  "30min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "cwe",
+                     "former-hotspot"
+                 ],
+        "creationDate":  "2026-09-17T21:36:33+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "VULNERABILITY",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "TRUSTWORTHY",
+        "cleanCodeAttributeCategory":  "RESPONSIBLE",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "SECURITY",
+                            "severity":  "HIGH"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    },
+    {
+        "key":  "AaCxYOJaCrXg5OrsAveE",
+        "rule":  "Web:InputWithoutLabelCheck",
+        "severity":  "MAJOR",
+        "component":  "bgrez-lab_gestion-productos-seguridad:templates/listar.html",
+        "project":  "bgrez-lab_gestion-productos-seguridad",
+        "line":  6,
+        "hash":  "75721c4822dc7f6a5501b014f4088b13",
+        "textRange":  {
+                          "startLine":  6,
+                          "endLine":  6,
+                          "startOffset":  5,
+                          "endOffset":  73
+                      },
+        "flows":  [
+
+                  ],
+        "status":  "OPEN",
+        "message":  "Add an \"id\" attribute to this input field and associate it with a label.",
+        "effort":  "5min",
+        "debt":  "5min",
+        "author":  "bgrez-lab@users.noreply.github.com",
+        "tags":  [
+                     "accessibility",
+                     "wcag2-a"
+                 ],
+        "creationDate":  "2026-09-17T21:36:33+0000",
+        "updateDate":  "2026-09-17T21:58:17+0000",
+        "type":  "BUG",
+        "organization":  "bgrez-lab",
+        "cleanCodeAttribute":  "CONVENTIONAL",
+        "cleanCodeAttributeCategory":  "CONSISTENT",
+        "impacts":  [
+                        {
+                            "softwareQuality":  "RELIABILITY",
+                            "severity":  "MEDIUM"
+                        }
+                    ],
+        "issueStatus":  "OPEN",
+        "projectName":  "gestion-productos-seguridad",
+        "internalTags":  [
+
+                         ],
+        "lastChangeAnalysisUuid":  "739a09b5-5665-4160-81c6-6a9963418ead",
+        "lastChangeSource":  "ANALYSIS"
+    }
+]

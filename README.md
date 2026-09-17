@@ -1,6 +1,7 @@
 # Gestión de productos (Flask + SQLite) — Trabajo individual
 
-Aplicación web de ejemplo para la asignatura. Incluye:
+Aplicación web de ejemplo para la asignatura **Desarrollo Avanzado** sobre análisis
+de código y detección de vulnerabilidades. Incluye:
 
 - CRUD completo de productos (crear, listar/buscar, editar, eliminar).
 - Autenticación de usuarios (registro, inicio y cierre de sesión).
@@ -15,7 +16,7 @@ Aplicación web de ejemplo para la asignatura. Incluye:
 ## Requisitos
 
 - Python 3.10+ (probado con 3.13.3)
-- Entorno virtual propio
+- Entorno virtual propio (`.venv`)
 
 ## Instalación y ejecución
 
@@ -28,21 +29,25 @@ python app.py                    # crea la base de datos y levanta el servidor
 
 Abrir http://127.0.0.1:5000. Usuario por defecto: `admin` / `admin123`.
 
-## Herramientas de análisis (uso)
+## Herramientas de análisis utilizadas
 
-```bash
-pip install -r requirements-herramientas.txt
+| Herramienta | Categoría | Instalación | Uso |
+|---|---|---|---|
+| **Bandit** | SAST (seguridad) | `pip install bandit` | `bandit -r . -x .venv -f html -o reporte_bandit.html` |
+| **Pylint** | Linter (calidad) | `pip install pylint` | `pylint app.py auth.py config.py database.py productos.py` |
+| **Semgrep** | SAST (reglas) | `pip install semgrep` | `semgrep scan --config auto --json -o evidencia/semgrep_scan.json` |
+| **SonarCloud** | Plataforma calidad + SAST (nube) | Cuenta en sonarcloud.io + GitHub Actions | push a `main` dispara el workflow `.github/workflows/sonarcloud.yml` |
+| **Pip-audit** | Dependencias | `pip install pip-audit` | `pip-audit -r requirements.txt` |
+| **Claude (IA)** | Code review por IA | Conversación guiada | Revisión línea a línea con hallazgos y correcciones (ver `evidencia/revision_claude.md`) |
 
-# Bandit (SAST orientado a seguridad)
-bandit -r . -x .venv -f html -o reporte_bandit.html
-bandit -r . -x .venv -f json -o reporte_bandit.json
+### Resultados principales (versión vulnerable)
 
-# Pylint (análisis estático de calidad)
-pylint app.py auth.py config.py database.py productos.py
+- **Bandit:** 6 hallazgos (MD5, inyección SQL, secreto embebido, debug, credenciales).
+- **Semgrep:** 16 hallazgos (inyección SQL, debug, NaN injection, CSRF, etc.).
+- **SonarCloud:** 9 issues — 8 vulnerabilidades (2 bloqueantes/críticas) + 1 bug. Quality Gate ROJO.
+- **Claude:** 14 hallazgos (vulnerabilidades, errores y malas prácticas).
 
-# pip-audit (vulnerabilidades en dependencias)
-pip-audit -r requirements.txt
-```
+Ver `evidencia/` con los reportes y `informe.md` con el análisis completo.
 
 ## Estructura
 
@@ -53,5 +58,8 @@ database.py       # conexión SQLite e inicialización del esquema
 auth.py           # blueprint de autenticación
 productos.py      # blueprint de CRUD de productos
 templates/        # plantillas Jinja2
-requirements.txt  # dependencias de la aplicación
+evidencia/        # reportes y capturas de las herramientas
+.github/          # workflow CI para SonarCloud
+sonar-project.properties  # configuración del análisis de Sonar
+requisitos: requirements.txt y requirements-herramientas.txt
 ```
