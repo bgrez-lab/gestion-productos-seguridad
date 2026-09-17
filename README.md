@@ -36,7 +36,7 @@ Abrir http://127.0.0.1:5000. Usuario por defecto: `admin` / `admin123`.
 | **Bandit** | SAST (seguridad) | `pip install bandit` | `bandit -r . -x .venv -f html -o reporte_bandit.html` |
 | **Pylint** | Linter (calidad) | `pip install pylint` | `pylint app.py auth.py config.py database.py productos.py` |
 | **Semgrep** | SAST (reglas) | `pip install semgrep` | `semgrep scan --config auto --json -o evidencia/semgrep_scan.json` |
-| **SonarCloud** | Plataforma calidad + SAST (nube) | Cuenta en sonarcloud.io + GitHub Actions | push a `main` dispara el workflow `.github/workflows/sonarcloud.yml` |
+| **SonarCloud** | Plataforma calidad + SAST (nube) | Cuenta en sonarcloud.io conectada al repo vía GitHub App | Analiza **automáticamente** en cada push a `main` |
 | **Pip-audit** | Dependencias | `pip install pip-audit` | `pip-audit -r requirements.txt` |
 | **Claude (IA)** | Code review por IA | Conversación guiada | Revisión línea a línea con hallazgos y correcciones (ver `evidencia/revision_claude.md`) |
 
@@ -59,7 +59,6 @@ auth.py           # blueprint de autenticación
 productos.py      # blueprint de CRUD de productos
 templates/        # plantillas Jinja2
 evidencia/        # reportes y capturas de las herramientas
-.github/          # workflow CI para SonarCloud
 sonar-project.properties  # configuración del análisis de Sonar
 requisitos: requirements.txt y requirements-herramientas.txt
 ```
