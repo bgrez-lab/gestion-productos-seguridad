@@ -1,15 +1,13 @@
-﻿{
-    "quality_gate":  "OK",
-    "condiciones":  [
-                        "new_reliability_rating=1 required GT 1",
-                        "new_security_rating=1 required GT 1",
-                        "new_maintainability_rating=1 required GT 1",
-                        "new_duplicated_lines_density=0.0 required GT 3",
-                        "new_security_hotspots_reviewed=100.0 required LT 100"
-                    ],
-    "issues_abiertas":  6,
-    "por_tipo":  [
-                     "VULNERABILITY:5",
-                     "BUG:1"
-                 ]
+{
+    "quality_gate": "ERROR",
+    "issues_abiertas": 13,
+    "por_tipo": [
+        "VULNERABILITY:11",
+        "BUG:2",
+        "CODE_SMELL:0"
+    ],
+    "vulnerabilities": "11",
+    "bugs": "2",
+    "security_rating": "5.0",
+    "reliability_rating": "3.0"
 }

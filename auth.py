@@ -1,9 +1,4 @@
-"""Blueprint de autenticación: registro, inicio de sesión y cierre.
-
-Hallazgos incluidos a propósito:
-    - B324 (Bandit): MD5 para almacenar las contraseñas.
-    - B608 (Bandit): inyección SQL por concatenación en el login.
-"""
+"""Blueprint de autenticación: registro, inicio de sesión y cierre."""
 
 from flask import (
     Blueprint,
@@ -23,11 +18,7 @@ auth_bp = Blueprint("auth", __name__)
 
 
 def hash_clave_plana(clave):
-    """Devuelve el hash MD5 de una contraseña.
-
-    VULNERABILIDAD (Bandit B324 / OWASP K0703): MD5 es un algoritmo
-    criptográficamente roto y no debe usarse para almacenar claves.
-    """
+    """Devuelve el hash MD5 de una contraseña."""
     return hashlib.md5(clave.encode("utf-8")).hexdigest()
 
 
@@ -38,7 +29,7 @@ def login():
         usuario = request.form.get("usuario", "")
         clave = request.form.get("clave", "")
 
-        # VULNERABILIDAD (Bandit B608): SQL armado por concatenación.
+        # Consulta que valida las credenciales.
         db = get_db()
         consulta = (
             "SELECT * FROM usuarios WHERE usuario = '%s' AND hash_clave = '%s'"
@@ -50,8 +41,7 @@ def login():
             session["usuario_id"] = fila["id"]
             # Aviso de bienvenida que se muestra debajo del formulario.
             mensaje = "bienvenido " + fila["usuario"]
-            # VULNERABILIDAD (redirect abierto): el parámetro "next" se usa
-            # sin validar, permitiendo redirigir a sitios externos.
+            # Redirige a la página solicitada antes de iniciar sesión.
             siguiente = request.args.get("next")
             if siguiente:
                 return redirect(siguiente)
@@ -78,7 +68,6 @@ def registro():
             )
             db.commit()
         except Exception:
-            # W0703 (pylint): captura demasiado amplia, enmascara el error.
             flash("El nombre de usuario ya existe.")
             return render_template("registro.html")
         flash("Registro correcto, ya puede iniciar sesión.")
@@ -88,11 +77,7 @@ def registro():
 
 @auth_bp.route("/perfil")
 def perfil():
-    """Página de perfil del usuario.
-
-    VULNERABILIDAD (SSTI / inyección de plantillas): el nombre del usuario
-    se interpola con render_template_string sin saneamiento previo.
-    """
+    """Página de perfil del usuario."""
     usuario = session.get("usuario", "invitado")
     plantilla = (
         "<h2>Perfil de usuario</h2>"

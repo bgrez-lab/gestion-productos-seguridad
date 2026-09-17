@@ -1,50 +1,106 @@
-﻿[
+[
     {
-        "rule":  "python:S4502",
-        "severity":  "CRITICAL",
-        "type":  "VULNERABILITY",
-        "file":  "app.py",
-        "line":  17,
-        "message":  "Make sure disabling CSRF protection is safe here."
+        "rule": "python:S4502",
+        "severity": "CRITICAL",
+        "type": "VULNERABILITY",
+        "file": "app.py",
+        "line": 17,
+        "message": "Make sure disabling CSRF protection is safe here."
     },
     {
-        "rule":  "python:S8392",
-        "severity":  "BLOCKER",
-        "type":  "VULNERABILITY",
-        "file":  "app.py",
-        "line":  44,
-        "message":  "Avoid binding the application to all network interfaces."
+        "rule": "python:S8392",
+        "severity": "BLOCKER",
+        "type": "VULNERABILITY",
+        "file": "app.py",
+        "line": 44,
+        "message": "Avoid binding the application to all network interfaces."
     },
     {
-        "rule":  "python:S4507",
-        "severity":  "MINOR",
-        "type":  "VULNERABILITY",
-        "file":  "app.py",
-        "line":  44,
-        "message":  "Make sure this debug feature is deactivated before delivering the code in production."
+        "rule": "python:S4507",
+        "severity": "MINOR",
+        "type": "VULNERABILITY",
+        "file": "app.py",
+        "line": 44,
+        "message": "Make sure this debug feature is deactivated before delivering the code in production."
     },
     {
-        "rule":  "python:S4790",
-        "severity":  "CRITICAL",
-        "type":  "VULNERABILITY",
-        "file":  "auth.py",
-        "line":  30,
-        "message":  "Make sure that hashing data is safe here."
+        "rule": "python:S4790",
+        "severity": "CRITICAL",
+        "type": "VULNERABILITY",
+        "file": "auth.py",
+        "line": 31,
+        "message": "Make sure that hashing data is safe here."
     },
     {
-        "rule":  "python:S4790",
-        "severity":  "CRITICAL",
-        "type":  "VULNERABILITY",
-        "file":  "database.py",
-        "line":  61,
-        "message":  "Make sure that hashing data is safe here."
+        "rule": "pythonsecurity:S5146",
+        "severity": "BLOCKER",
+        "type": "VULNERABILITY",
+        "file": "auth.py",
+        "line": 57,
+        "message": "Open Redirect via unsanitized user input in auth.login()"
     },
     {
-        "rule":  "Web:InputWithoutLabelCheck",
-        "severity":  "MAJOR",
-        "type":  "BUG",
-        "file":  "templates/listar.html",
-        "line":  6,
-        "message":  "Add an \"id\" attribute to this input field and associate it with a label."
+        "rule": "python:S4790",
+        "severity": "CRITICAL",
+        "type": "VULNERABILITY",
+        "file": "database.py",
+        "line": 61,
+        "message": "Make sure that hashing data is safe here."
+    },
+    {
+        "rule": "pythonsecurity:S5334",
+        "severity": "BLOCKER",
+        "type": "VULNERABILITY",
+        "file": "productos.py",
+        "line": 119,
+        "message": "Code Injection via unsanitized user input in productos.impuesto()"
+    },
+    {
+        "rule": "pythonsecurity:S5131",
+        "severity": "BLOCKER",
+        "type": "VULNERABILITY",
+        "file": "productos.py",
+        "line": 120,
+        "message": "Reflected XSS via unsanitized user input in productos.impuesto()"
+    },
+    {
+        "rule": "pythonsecurity:S2076",
+        "severity": "BLOCKER",
+        "type": "VULNERABILITY",
+        "file": "productos.py",
+        "line": 148,
+        "message": "Command Injection via unsanitized user input in productos.importar()"
+    },
+    {
+        "rule": "Web:InputWithoutLabelCheck",
+        "severity": "MAJOR",
+        "type": "BUG",
+        "file": "templates/listar.html",
+        "line": 6,
+        "message": "Add an \"id\" attribute to this input field and associate it with a label."
+    },
+    {
+        "rule": "Web:S5247",
+        "severity": "MAJOR",
+        "type": "VULNERABILITY",
+        "file": "templates/listar.html",
+        "line": 10,
+        "message": "Make sure disabling auto-escaping feature is safe here."
+    },
+    {
+        "rule": "pythonsecurity:S5131",
+        "severity": "BLOCKER",
+        "type": "VULNERABILITY",
+        "file": "templates/listar.html",
+        "line": 10,
+        "message": "Reflected XSS via unsanitized user input"
+    },
+    {
+        "rule": "Web:InputWithoutLabelCheck",
+        "severity": "MAJOR",
+        "type": "BUG",
+        "file": "templates/listar.html",
+        "line": 17,
+        "message": "Add an \"id\" attribute to this input field and associate it with a label."
     }
 ]

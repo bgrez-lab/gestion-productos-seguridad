@@ -2,9 +2,6 @@
 
 Levanta el servidor, inicializa la base de datos y registra los
 blueprints de autenticación y de CRUD de productos.
-
-Hallazgos incluidos a propósito:
-    - B201 (Bandit): debug=True + expuesto en 0.0.0.0.
 """
 
 from flask import Flask, redirect, session, url_for
@@ -40,5 +37,4 @@ def logout():
 
 if __name__ == "__main__":
     init_db()
-    # Hallazgo B201 (Bandit): debug=True + expuesto en 0.0.0.0.
     app.run(host="0.0.0.0", port=5000, debug=True)

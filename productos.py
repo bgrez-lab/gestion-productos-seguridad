@@ -1,10 +1,4 @@
-"""Blueprint con el CRUD de productos sobre SQLite.
-
-Hallazgos incluidos a propósito para que las herramientas los detecten:
-    - B608 (Bandit): inyección SQL en la búsqueda por concatenación.
-    - W0611 (pylint): import sin uso (datetime).
-    - W0703 (pylint): captura de excepción demasiado genérica en crear()/editar().
-"""
+"""Blueprint con el CRUD de productos sobre SQLite."""
 
 from flask import (
     Blueprint,
@@ -15,7 +9,7 @@ from flask import (
     session,
     url_for,
 )
-import datetime  # W0611 (pylint): import declarado pero nunca utilizado.
+import datetime
 import os
 
 from database import get_db
@@ -40,11 +34,7 @@ def listar():
 
 @productos_bp.route("/buscar")
 def buscar():
-    """Busca productos por nombre.
-
-    VULNERABILIDAD (Bandit B608): el término se concatena directamente en
-    la consulta SQL. Payload de ejemplo:  x' OR '1'='1
-    """
+    """Busca productos por nombre."""
     if not sesion_activa():
         return redirect(url_for("auth.login"))
     termino = request.args.get("q", "")
@@ -65,7 +55,6 @@ def crear():
             precio = float(request.form.get("precio", "0"))
             stock = int(request.form.get("stock", "0"))
         except Exception:
-            # W0703 (pylint): captura demasiado amplia, enmascara el error.
             flash("Precio o stock inválidos.")
             return render_template("formulario.html")
         db = get_db()
@@ -90,7 +79,6 @@ def editar(producto_id):
             precio = float(request.form.get("precio", "0"))
             stock = int(request.form.get("stock", "0"))
         except Exception:
-            # W0703 (pylint): captura demasiado amplia.
             flash("Precio o stock inválidos.")
             return render_template("formulario.html")
         db.execute(
@@ -107,15 +95,11 @@ def editar(producto_id):
 
 @productos_bp.route("/impuesto")
 def impuesto():
-    """Calcula el precio con impuesto a partir de una expresión.
-
-    VULNERABILIDAD (Bandit B307): eval() sobre una expresión controlada
-    por el usuario permite ejecución de código arbitrario.
-    """
+    """Calcula el precio con impuesto a partir de una expresión."""
     if not sesion_activa():
         return redirect(url_for("auth.login"))
     expresion = request.args.get("e", "0")
-    # Hallazgo B307 (Bandit): eval sobre entrada del usuario.
+    # Aplica la fórmula de impuesto indicada por el usuario.
     total = eval(expresion)
     return f"Total con impuesto (19%): {total}"
 
@@ -126,8 +110,6 @@ def eliminar(producto_id):
     if not sesion_activa():
         return redirect(url_for("auth.login"))
     db = get_db()
-    # VULNERABILIDAD (Bandit B608): el id se concatena directamente en la
-    # consulta SQL. Payload de ejemplo:  1 OR '1'='1
     db.execute("DELETE FROM productos WHERE id = " + str(producto_id))
     db.commit()
     return redirect(url_for("productos.listar"))
@@ -135,16 +117,10 @@ def eliminar(producto_id):
 
 @productos_bp.route("/importar", methods=["POST"])
 def importar():
-    """Importa un lote de productos desde un archivo de la carpeta local.
-
-    VULNERABILIDAD (Bandit B605): el nombre del archivo se concatena en un
-    comando de shell, permitiendo inyección de comandos. Payload de ejemplo:
-    lote.txt; ipconfig
-    """
+    """Importa un lote de productos desde un archivo de la carpeta local."""
     if not sesion_activa():
         return redirect(url_for("auth.login"))
     archivo = request.form.get("archivo", "lote.txt")
-    # Hallazgo B605 (Bandit): os.system con datos del usuario.
     os.system("echo importacion >> " + archivo)
     db = get_db()
     db.execute(

@@ -41,15 +41,16 @@ indicando tipo, severidad, ubicación, explicación y la corrección recomendada
 <li><strong>Qué es:</strong> analizador estático de seguridad para Python, oficial de PyCQA; recorre el AST
   buscando patrones de riesgo conocidos (B-series: B201 debug, B324 MD5, B608 SQL inyección, B105 secretos).</li>
 <li><strong>Uso:</strong> <code>bandit -r . -x .venv -f json -o evidencia/bandit_antes.json</code>.</li>
-<li><strong>Resultado sobre el programa original:</strong> <strong>7 hallazgos</strong> (3 High, 3 Medium, 1 Low).</li>
+<li><strong>Resultado sobre el programa original:</strong> <strong>10 hallazgos</strong> (4 High, 5 Medium, 1 Low).</li>
 </ul>
 <h3>2.2 Semgrep — SAST de reglas (gratuito/open source)</h3>
 <ul>
 <li><strong>Qué es:</strong> analizador por <em>patrones</em> multiplataforma; busca código con reglas YAML
   (estilo grep con sintaxis de programación). Corre cientos de reglas de seguridad de la comunidad.</li>
 <li><strong>Uso:</strong> <code>semgrep scan --config auto --json -o evidencia/semgrep_scan.json</code>.</li>
-<li><strong>Resultado sobre el programa original:</strong> <strong>16 hallazgos</strong> en 14 ubicaciones (varias reglas
-  coinciden sobre la misma línea: django/flask/sqlalchemy).</li>
+<li><strong>Resultado sobre el programa original:</strong> <strong>28 hallazgos</strong> en 10 archivos (15 error / 13 warning);
+  varias familias de reglas (django/flask/sqlalchemy) coinciden sobre la misma línea, por lo que el
+  número de problemas reales es menor.</li>
 </ul>
 <h3>2.3 SonarCloud — Plataforma integral de calidad de código (SAST en la nube)</h3>
 <ul>
@@ -57,13 +58,13 @@ indicando tipo, severidad, ubicación, explicación y la corrección recomendada
   con severidad, calcula <strong>Quality Gates</strong> y detecta problemas de mantenibilidad, duplicación y cobertura.</li>
 <li><strong>Uso:</strong> cuenta en sonarcloud.io conectada al repositorio GitHub; análisis automático en cada push
   (integración vía GitHub App). No requirió Docker ni Java 17 (necesarios para SonarQube local).</li>
-<li><strong>Resultado sobre el programa original:</strong> <strong>6 issues abiertas</strong> (5 vulnerabilidades + 1 bug).</li>
+<li><strong>Resultado sobre el programa original:</strong> <strong>13 issues abiertas</strong> (11 vulnerabilidades + 2 bugs).</li>
 </ul>
 <h3>2.4 Revisión por IA (Claude) — herramienta complementaria</h3>
 <ul>
 <li><strong>Qué es:</strong> revisión línea a línea del código asistida por un modelo de lenguaje
   ("AI code review"), que además de patrones detecta problemas de lógica de negocio.</li>
-<li><strong>Resultado sobre el programa original:</strong> <strong>14 hallazgos</strong> (8 de seguridad, 2 errores,
+<li><strong>Resultado sobre el programa original:</strong> <strong>21 hallazgos</strong> (15 de seguridad, 2 errores,
   4 malas prácticas/calidad), documentados en <code>evidencia/revision_claude.md</code>.</li>
 </ul>
 <h3>2.5 Cuadro comparativo</h3>
@@ -146,6 +147,8 @@ indicando tipo, severidad, ubicación, explicación y la corrección recomendada
 <li><strong>CRUD completo</strong> sobre la entidad <em>producto</em> (crear, listar/buscar, editar, eliminar).</li>
 <li><strong>Autenticación</strong> con registro, inicio y cierre de sesión, sobre la entidad <em>usuario</em>.</li>
 <li><strong>Base de datos relacional</strong> SQLite conectada (<code>productos.db</code>, tablas <code>usuarios</code> y <code>productos</code>).</li>
+<li><strong>Funciones extra de tipo estudiantil:</strong> cálculo de precio con impuesto (<code>/impuesto</code>, acepta una
+  expresión), importación de lotes por línea de comandos (<code>/importar</code>) y página de perfil (<code>/perfil</code>).</li>
 </ul>
 <p>Esquema:</p>
 <pre><code>app.py            → arranque y configuración de la aplicación
@@ -167,7 +170,7 @@ registrar los problemas detectados.</p>
 <li><strong>Análisis SAST/Bandit:</strong> ejecución de Bandit sobre los módulos Python del programa original.</li>
 <li><strong>Análisis Semgrep:</strong> ejecución con <code>--config auto</code>, guardando el reporte JSON.</li>
 <li><strong>Análisis SonarCloud:</strong> conexión del repositorio y análisis automático; registro de las issues abiertas.</li>
-<li><strong>Revisión por IA:</strong> lectura del código con Claude, con 14 hallazgos documentados.</li>
+<li><strong>Revisión por IA:</strong> lectura del código con Claude, con 21 hallazgos documentados.</li>
 <li><strong>Registro:</strong> para cada hallazgo se documentó tipo, severidad, ubicación exacta (archivo:línea),
    explicación del riesgo y corrección recomendada.</li>
 <li><strong>Verificación de reproducibilidad:</strong> el código original se volvió a publicar en <code>main</code> y
@@ -176,43 +179,13 @@ registrar los problemas detectados.</p>
 <hr />
 <h2>5. Registro de problemas detectados en el programa original</h2>
 <h3>5.1 Resumen por herramienta</h3>
-<table>
-<thead>
-<tr>
-<th>Herramienta</th>
-<th>Hallazgos</th>
-<th>Severidades destacadas</th>
-<th>Reporte</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Bandit</td>
-<td><strong>7</strong></td>
-<td>3 High · 3 Medium · 1 Low</td>
-<td><code>evidencia/bandit_antes.json</code></td>
-</tr>
-<tr>
-<td>Semgrep</td>
-<td><strong>16</strong></td>
-<td>8 error / 8 warning</td>
-<td><code>evidencia/semgrep_scan.json</code></td>
-</tr>
-<tr>
-<td>SonarCloud</td>
-<td><strong>6</strong></td>
-<td>1 Blocker · 2 Critical · 1 Major(MINOR) · 2 Major</td>
-<td><code>evidencia/sonarcloud_issues.json</code></td>
-</tr>
-<tr>
-<td>IA (Claude)</td>
-<td><strong>14</strong></td>
-<td>3 crítica · 4 alta · 2 media · 5 baja</td>
-<td><code>evidencia/revision_claude.md</code></td>
-</tr>
-</tbody>
-</table>
-<h3>5.2 Bandit — 7 hallazgos</h3>
+<p>| Herramienta | Hallazgos | Severidades destacadas | Reporte |
+|---|---|---|---|---|
+| Bandit | <strong>10</strong> | 4 High · 5 Medium · 1 Low | <code>evidencia/bandit_antes.json</code> |
+| Semgrep | <strong>28</strong> | 15 error / 13 warning | <code>evidencia/semgrep_scan.json</code> |
+| SonarCloud | <strong>13</strong> | 6 Blocker · 3 Critical · 1 Minor · 3 Major | <code>evidencia/sonarcloud_issues.json</code> |
+| IA (Claude) | <strong>21</strong> | 5 crítica · 6 alta · 4 media · 6 baja | <code>evidencia/revision_claude.md</code> |</p>
+<h3>5.2 Bandit — 10 hallazgos</h3>
 <table>
 <thead>
 <tr>
@@ -246,7 +219,7 @@ registrar los problemas detectados.</p>
 <td>B324 <code>hashlib</code></td>
 <td>High</td>
 <td>CWE-327</td>
-<td><code>auth.py:30</code></td>
+<td><code>auth.py:31</code></td>
 <td>Hash MD5 para contraseñas (criptografía rota)</td>
 </tr>
 <tr>
@@ -254,7 +227,7 @@ registrar los problemas detectados.</p>
 <td>B608 <code>hardcoded_sql_expressions</code></td>
 <td>Medium</td>
 <td>CWE-89</td>
-<td><code>auth.py:43</code></td>
+<td><code>auth.py:44</code></td>
 <td>Consulta SQL por concatenación (login)</td>
 </tr>
 <tr>
@@ -278,12 +251,36 @@ registrar los problemas detectados.</p>
 <td>B608 <code>hardcoded_sql_expressions</code></td>
 <td>Medium</td>
 <td>CWE-89</td>
-<td><code>productos.py:51</code></td>
+<td><code>productos.py:52</code></td>
 <td>Consulta SQL por concatenación (búsqueda <code>LIKE</code>)</td>
+</tr>
+<tr>
+<td>B8</td>
+<td>B307 <code>eval_used</code></td>
+<td>Medium</td>
+<td>CWE-95</td>
+<td><code>productos.py:119</code></td>
+<td><code>eval()</code> sobre expresión controlada por el usuario (<code>/impuesto</code>)</td>
+</tr>
+<tr>
+<td>B9</td>
+<td>B608 <code>hardcoded_sql_expressions</code></td>
+<td>Medium</td>
+<td>CWE-89</td>
+<td><code>productos.py:131</code></td>
+<td>Consulta SQL por concatenación (eliminar: <code>DELETE ... WHERE id = " + id</code>)</td>
+</tr>
+<tr>
+<td>B10</td>
+<td>B605 <code>start_process_with_shell</code></td>
+<td>High</td>
+<td>CWE-78</td>
+<td><code>productos.py:148</code></td>
+<td><code>os.system()</code> con el nombre de archivo del usuario (<code>/importar</code>) → inyección de comandos</td>
 </tr>
 </tbody>
 </table>
-<h3>5.3 Semgrep — 16 hallazgos</h3>
+<h3>5.3 Semgrep — 28 hallazgos</h3>
 <table>
 <thead>
 <tr>
@@ -311,97 +308,181 @@ registrar los problemas detectados.</p>
 </tr>
 <tr>
 <td>S3</td>
-<td>warning</td>
-<td><code>python.django.security.injection.sql.sql-injection</code></td>
-<td><code>auth.py:37</code></td>
-<td>Dato del request llega a <code>execute()</code></td>
+<td>error</td>
+<td><code>python.django.security.injection.tainted-sql-string</code></td>
+<td><code>auth.py:43</code></td>
+<td>SQL construido con datos del usuario (login)</td>
 </tr>
 <tr>
 <td>S4</td>
 <td>error</td>
-<td><code>python.django.security.injection.tainted-sql-string</code></td>
-<td><code>auth.py:42</code></td>
-<td>SQL construido con datos del usuario</td>
+<td><code>python.flask.security.injection.tainted-sql-string</code></td>
+<td><code>auth.py:43</code></td>
+<td>Ídem (regla Flask)</td>
 </tr>
 <tr>
 <td>S5</td>
-<td>error</td>
-<td><code>python.flask.security.injection.tainted-sql-string</code></td>
-<td><code>auth.py:42</code></td>
-<td>Ídem (regla Flask)</td>
+<td>warning</td>
+<td><code>python.django.security.injection.sql.sql-injection</code></td>
+<td><code>auth.py:38</code></td>
+<td>Dato del request llega a <code>execute()</code></td>
 </tr>
 <tr>
 <td>S6</td>
 <td>warning</td>
 <td><code>python.lang.security.audit.formatted-sql-query</code></td>
-<td><code>auth.py:46</code></td>
+<td><code>auth.py:47</code></td>
 <td>Posible SQL formateado</td>
 </tr>
 <tr>
 <td>S7</td>
 <td>error</td>
 <td><code>python.sqlalchemy.security.sqlalchemy-execute-raw</code></td>
-<td><code>auth.py:46</code></td>
+<td><code>auth.py:47</code></td>
 <td>Concatenación con entrada no confiable</td>
 </tr>
 <tr>
 <td>S8</td>
 <td>error</td>
 <td><code>python.django.security.injection.tainted-sql-string</code></td>
-<td><code>productos.py:51</code></td>
+<td><code>productos.py:52</code></td>
 <td>SQL construido en búsqueda</td>
 </tr>
 <tr>
 <td>S9</td>
 <td>error</td>
 <td><code>python.flask.security.injection.tainted-sql-string</code></td>
-<td><code>productos.py:51</code></td>
+<td><code>productos.py:52</code></td>
 <td>Ídem (regla Flask)</td>
 </tr>
 <tr>
 <td>S10</td>
 <td>error</td>
 <td><code>python.sqlalchemy.security.sqlalchemy-execute-raw</code></td>
-<td><code>productos.py:52</code></td>
+<td><code>productos.py:53</code></td>
 <td>Concatenación en <code>execute()</code></td>
 </tr>
 <tr>
 <td>S11</td>
 <td>error</td>
-<td><code>python.flask.security.injection.nan-injection</code></td>
-<td><code>productos.py:64</code></td>
-<td>Entrada del usuario a <code>float()</code> (NaN injection)</td>
+<td><code>python.flask.security.injection.tainted-sql-string</code></td>
+<td><code>productos.py:131</code></td>
+<td>SQL construido en el borrado (<code>DELETE</code>)</td>
 </tr>
 <tr>
 <td>S12</td>
 <td>error</td>
-<td><code>python.flask.security.injection.nan-injection</code></td>
-<td><code>productos.py:89</code></td>
-<td>Entrada del usuario a <code>float()</code>/<code>int()</code></td>
+<td><code>python.sqlalchemy.security.sqlalchemy-execute-raw</code></td>
+<td><code>productos.py:131</code></td>
+<td>Concatenación del <code>id</code> en <code>execute()</code></td>
 </tr>
 <tr>
 <td>S13</td>
+<td>error</td>
+<td><code>python.flask.security.injection.nan-injection</code></td>
+<td><code>productos.py:65</code></td>
+<td>Entrada del usuario a <code>float()</code> (NaN injection)</td>
+</tr>
+<tr>
+<td>S14</td>
+<td>error</td>
+<td><code>python.flask.security.injection.nan-injection</code></td>
+<td><code>productos.py:90</code></td>
+<td>Entrada del usuario a <code>float()</code>/<code>int()</code></td>
+</tr>
+<tr>
+<td>S15</td>
+<td>error</td>
+<td><code>python.flask.security.open-redirect</code></td>
+<td><code>auth.py:55</code></td>
+<td>Redirección a <code>?next=</code> sin validar (open redirect)</td>
+</tr>
+<tr>
+<td>S16</td>
+<td>error</td>
+<td><code>python.flask.security.injection.user-eval</code></td>
+<td><code>productos.py:119</code></td>
+<td><code>eval()</code> con entrada del usuario (<code>/impuesto</code>)</td>
+</tr>
+<tr>
+<td>S17</td>
+<td>warning</td>
+<td><code>python.django.security.injection.user-eval</code></td>
+<td><code>productos.py:117</code></td>
+<td>Ídem (regla Django)</td>
+</tr>
+<tr>
+<td>S18</td>
+<td>warning</td>
+<td><code>python.lang.security.audit.eval-detected</code></td>
+<td><code>productos.py:119</code></td>
+<td>Uso de <code>eval()</code> detectado</td>
+</tr>
+<tr>
+<td>S19</td>
+<td>error</td>
+<td><code>python.django.security.injection.command-injection-os-system</code></td>
+<td><code>productos.py:146</code></td>
+<td>Comando shell con entrada del usuario (<code>/importar</code>)</td>
+</tr>
+<tr>
+<td>S20</td>
+<td>error</td>
+<td><code>python.flask.security.injection.os-system-injection</code></td>
+<td><code>productos.py:148</code></td>
+<td><code>os.system()</code> con datos del usuario</td>
+</tr>
+<tr>
+<td>S21</td>
+<td>error</td>
+<td><code>python.lang.security.audit.dangerous-system-call</code></td>
+<td><code>productos.py:148</code></td>
+<td>Llamada peligrosa al sistema</td>
+</tr>
+<tr>
+<td>S22</td>
+<td>warning</td>
+<td><code>python.flask.security.audit.directly-returned-format-string</code></td>
+<td><code>productos.py:120</code></td>
+<td>Cadena formateada devuelta directamente</td>
+</tr>
+<tr>
+<td>S23</td>
+<td>warning</td>
+<td><code>python.flask.security.audit.render-template-string</code></td>
+<td><code>auth.py:102</code></td>
+<td><code>render_template_string</code> (posible SSTI)</td>
+</tr>
+<tr>
+<td>S24</td>
 <td>warning</td>
 <td><code>python.django.security.django-no-csrf-token</code></td>
 <td><code>formulario.html:4</code></td>
 <td>Formulario sin token CSRF</td>
 </tr>
 <tr>
-<td>S14</td>
+<td>S25</td>
 <td>warning</td>
 <td><code>python.django.security.django-no-csrf-token</code></td>
-<td><code>listar.html:22</code></td>
-<td>Formulario sin token CSRF</td>
+<td><code>listar.html:15</code></td>
+<td>Formulario sin token CSRF (importar lote)</td>
 </tr>
 <tr>
-<td>S15</td>
+<td>S26</td>
+<td>warning</td>
+<td><code>python.django.security.django-no-csrf-token</code></td>
+<td><code>listar.html:31</code></td>
+<td>Formulario sin token CSRF (eliminar)</td>
+</tr>
+<tr>
+<td>S27</td>
 <td>warning</td>
 <td><code>python.django.security.django-no-csrf-token</code></td>
 <td><code>login.html:4</code></td>
 <td>Formulario sin token CSRF</td>
 </tr>
 <tr>
-<td>S16</td>
+<td>S28</td>
 <td>warning</td>
 <td><code>python.django.security.django-no-csrf-token</code></td>
 <td><code>registro.html:4</code></td>
@@ -409,9 +490,12 @@ registrar los problemas detectados.</p>
 </tr>
 </tbody>
 </table>
-<p>Nota: S3–S10 son la misma inyección SQL vista por varias familias de reglas (django/flask/sqlalchemy);
-el problema real son <strong>dos</strong> consultas concatenadas (<code>auth.py:43</code> y <code>productos.py:51</code>).</p>
-<h3>5.4 SonarCloud — 6 issues abiertas</h3>
+<p>Nota: S3–S12 son las tres inyecciones SQL reales (login <code>auth.py:44</code>, búsqueda <code>productos.py:52</code> y
+borrado <code>productos.py:131</code>) vistas por varias familias de reglas (django/flask/sqlalchemy);
+S16–S18 y S19–S21 son respectivamente el mismo <code>eval()</code> y el mismo <code>os.system()</code> reportados por
+distintas familias de reglas. Los avisos <code>django-no-csrf-token</code> aplican reglas de Django sobre
+plantillas de Flask (falso positivo parcial: el programa original no tiene protección CSRF).</p>
+<h3>5.4 SonarCloud — 13 issues abiertas</h3>
 <table>
 <thead>
 <tr>
@@ -453,7 +537,7 @@ el problema real son <strong>dos</strong> consultas concatenadas (<code>auth.py:
 <td><code>python:S4790</code></td>
 <td>Critical</td>
 <td>Vulnerabilidad</td>
-<td><code>auth.py:30</code></td>
+<td><code>auth.py:31</code></td>
 <td>Hashing de datos inseguro (MD5)</td>
 </tr>
 <tr>
@@ -466,20 +550,76 @@ el problema real son <strong>dos</strong> consultas concatenadas (<code>auth.py:
 </tr>
 <tr>
 <td>Q6</td>
+<td><code>pythonsecurity:S5146</code></td>
+<td>Blocker</td>
+<td>Vulnerabilidad</td>
+<td><code>auth.py:57</code></td>
+<td>Redirección controlada por el usuario (<code>?next=</code>) sin validar</td>
+</tr>
+<tr>
+<td>Q7</td>
+<td><code>pythonsecurity:S5334</code></td>
+<td>Blocker</td>
+<td>Vulnerabilidad</td>
+<td><code>productos.py:119</code></td>
+<td>Evaluación de código del usuario (<code>eval</code>)</td>
+</tr>
+<tr>
+<td>Q8</td>
+<td><code>pythonsecurity:S5131</code></td>
+<td>Blocker</td>
+<td>Vulnerabilidad</td>
+<td><code>productos.py:120</code></td>
+<td>Salida formateada devuelta directamente al navegador</td>
+</tr>
+<tr>
+<td>Q9</td>
+<td><code>pythonsecurity:S2076</code></td>
+<td>Blocker</td>
+<td>Vulnerabilidad</td>
+<td><code>productos.py:148</code></td>
+<td>Inyección de comandos del sistema (<code>os.system</code>)</td>
+</tr>
+<tr>
+<td>Q10</td>
 <td><code>Web:InputWithoutLabelCheck</code></td>
 <td>Major</td>
 <td>Bug (accesibilidad)</td>
 <td><code>listar.html:6</code></td>
 <td>Campo de búsqueda sin <code>label</code></td>
 </tr>
+<tr>
+<td>Q11</td>
+<td><code>Web:S5247</code></td>
+<td>Major</td>
+<td>Vulnerabilidad</td>
+<td><code>listar.html:10</code></td>
+<td>XSS reflejado por <code>{{ termino|safe }}</code></td>
+</tr>
+<tr>
+<td>Q12</td>
+<td><code>pythonsecurity:S5131</code></td>
+<td>Blocker</td>
+<td>Vulnerabilidad</td>
+<td><code>listar.html:10</code></td>
+<td>Contenido del usuario incrustado sin escapar</td>
+</tr>
+<tr>
+<td>Q13</td>
+<td><code>Web:InputWithoutLabelCheck</code></td>
+<td>Major</td>
+<td>Bug (accesibilidad)</td>
+<td><code>listar.html:17</code></td>
+<td>Campo "archivo" sin <code>label</code></td>
+</tr>
 </tbody>
 </table>
 <p>Nota: en un análisis anterior la plataforma reportó además 3 issues de tipo <code>githubactions</code> relativas
 al workflow de CI (pin de acciones, versionado de dependencias); dicho archivo se retiró del repositorio
 (la integración usa la GitHub App de SonarCloud) y, por tanto, el código del programa registra las
-<strong>6 issues</strong> de la tabla, que quedan <strong>abiertas</strong> en el análisis del código entregado.</p>
-<h3>5.5 Revisión por IA (Claude) — 14 hallazgos</h3>
-<p>Vulnerabilidades (8):</p>
+<strong>13 issues</strong> de la tabla, que quedan <strong>abiertas</strong> en el análisis del código entregado.</p>
+<h3>5.5 Revisión por IA (Claude) — 21 hallazgos</h3>
+<p>Vulnerabilidades (15):</p>
 <table>
 <thead>
 <tr>
@@ -494,19 +634,19 @@ al workflow de CI (pin de acciones, versionado de dependencias); dicho archivo s
 <td>C1</td>
 <td>Contraseñas con MD5 sin sal</td>
 <td>Crítica</td>
-<td><code>auth.py:24-30</code>, <code>database.py:59-62</code></td>
+<td><code>auth.py:31</code>, <code>database.py:61</code></td>
 </tr>
 <tr>
 <td>C2</td>
 <td>Inyección SQL en login</td>
 <td>Crítica</td>
-<td><code>auth.py:40-46</code></td>
+<td><code>auth.py:40-47</code></td>
 </tr>
 <tr>
 <td>C3</td>
 <td>Inyección SQL en búsqueda</td>
 <td>Alta</td>
-<td><code>productos.py:49-52</code></td>
+<td><code>productos.py:50-53</code></td>
 </tr>
 <tr>
 <td>C4</td>
@@ -536,12 +676,54 @@ al workflow de CI (pin de acciones, versionado de dependencias); dicho archivo s
 <td>C8</td>
 <td>NaN injection en precio/stock</td>
 <td>Media</td>
-<td><code>productos.py:64,89</code></td>
+<td><code>productos.py:65,90</code></td>
+</tr>
+<tr>
+<td>C15</td>
+<td><code>eval()</code> en <code>/impuesto</code> → ejecución de código</td>
+<td>Crítica</td>
+<td><code>productos.py:117-120</code></td>
+</tr>
+<tr>
+<td>C16</td>
+<td>Inyección de comandos en <code>/importar</code> (<code>os.system</code>)</td>
+<td>Crítica</td>
+<td><code>productos.py:146-148</code></td>
+</tr>
+<tr>
+<td>C17</td>
+<td>Inyección SQL en el borrado (<code>DELETE</code>)</td>
+<td>Alta</td>
+<td><code>productos.py:131</code></td>
+</tr>
+<tr>
+<td>C18</td>
+<td>XSS reflejado en la búsqueda (<code>{{ termino\|safe }}</code>)</td>
+<td>Alta</td>
+<td><code>listar.html:10</code></td>
+</tr>
+<tr>
+<td>C19</td>
+<td>SSTI en <code>/perfil</code> (<code>render_template_string</code>)</td>
+<td>Alta</td>
+<td><code>auth.py:99-104</code></td>
+</tr>
+<tr>
+<td>C20</td>
+<td>Open redirect por <code>?next=</code> sin validar</td>
+<td>Media</td>
+<td><code>auth.py:53-59</code></td>
+</tr>
+<tr>
+<td>C21</td>
+<td>Contraseña de BD embebida (<code>CLAVE_BD</code>)</td>
+<td>Media</td>
+<td><code>config.py:22</code></td>
 </tr>
 </tbody>
 </table>
-<p>Errores de programación (2): C9 login exitoso redirige al propio login (<code>auth.py:50</code>); C10
-excepción demasiado amplia (<code>auth.py:72</code>, <code>productos.py:66,91</code>).</p>
+<p>Errores de programación (2): C9 login exitoso redirige al propio login y muestra el aviso de
+bienvenida (<code>auth.py:50-59</code>); C10 excepción demasiado amplia (<code>auth.py:80</code>, <code>productos.py:67,92</code>).</p>
 <p>Malas prácticas / calidad (4): C11 import sin uso (<code>productos.py:18</code>); C12 sin validación de
 entrada (nombres vacíos, claves triviales); C13 sesión sin renovación ni cookie <code>Secure</code>/<code>SameSite</code>;
 C14 sin límite de intentos de login (fuerza bruta).</p>
@@ -562,12 +744,12 @@ sobre el código original:</p>
 <tr>
 <td><code>evidencia/capturas/captura_sonar_overview.png</code></td>
 <td>sonarcloud.io (página oficial)</td>
-<td>Overview del proyecto: el programa original con 6 issues abiertas</td>
+<td>Overview del proyecto: el programa original con 13 issues abiertas</td>
 </tr>
 <tr>
 <td><code>evidencia/capturas/captura_sonar_issues.png</code></td>
 <td>sonarcloud.io (página oficial)</td>
-<td>Lista de las 6 issues abiertas (<code>resolved=false</code>)</td>
+<td>Lista de las 13 issues abiertas (<code>resolved=false</code>)</td>
 </tr>
 <tr>
 <td><code>evidencia/capturas/captura_quality_gate.png</code></td>
@@ -582,17 +764,17 @@ sobre el código original:</p>
 <tr>
 <td><code>evidencia/capturas/captura_semgrep_antes.png</code></td>
 <td>Ejecución local (terminal)</td>
-<td>Salida real de <code>semgrep scan</code> sobre el código original (16 hallazgos)</td>
+<td>Salida real de <code>semgrep scan</code> sobre el código original (28 hallazgos)</td>
 </tr>
 <tr>
 <td><code>evidencia/capturas/captura_bandit_antes.png</code></td>
 <td>Ejecución local (terminal)</td>
-<td>Salida real de <code>bandit</code> sobre el código original (7 hallazgos)</td>
+<td>Salida real de <code>bandit</code> sobre el código original (10 hallazgos)</td>
 </tr>
 <tr>
 <td><code>evidencia/capturas/captura_pylint.png</code></td>
 <td>Ejecución local (terminal)</td>
-<td>Salida real de <code>pylint</code> (9.46/10)</td>
+<td>Salida real de <code>pylint</code> (9.43/10)</td>
 </tr>
 </tbody>
 </table>
@@ -605,82 +787,37 @@ sobre el código original:</p>
 <hr />
 <h2>7. Análisis de los problemas registrados</h2>
 <p>Agrupando los hallazgos de las cuatro fuentes (se contó cada problema real una sola vez):</p>
-<table>
-<thead>
-<tr>
-<th>Categoría</th>
-<th>CWE/OWASP</th>
-<th>Problemas</th>
-<th>Herramientas que lo detectaron</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Criptografía rota (MD5 sin sal)</td>
-<td>CWE-327</td>
-<td>1</td>
-<td>Bandit, SonarCloud, IA</td>
-</tr>
-<tr>
-<td>Inyección SQL</td>
-<td>CWE-89 / A03</td>
-<td>2 (login y búsqueda)</td>
-<td>Bandit, Semgrep, IA</td>
-</tr>
-<tr>
-<td>Configuración peligrosa (debug, 0.0.0.0, CSRF off)</td>
-<td>CWE-605/A05, A07</td>
-<td>3</td>
-<td>Bandit, Semgrep, SonarCloud, IA</td>
-</tr>
-<tr>
-<td>Secretos en el código</td>
-<td>CWE-259</td>
-<td>2 (SECRET_KEY, credenciales admin)</td>
-<td>Bandit, IA</td>
-</tr>
-<tr>
-<td>CSRF sin token en formularios</td>
-<td>A01</td>
-<td>4 formularios</td>
-<td>Semgrep, SonarCloud, IA</td>
-</tr>
-<tr>
-<td>NaN injection</td>
-<td>CWE-20</td>
-<td>1</td>
-<td>Semgrep, IA</td>
-</tr>
-<tr>
-<td>Errores de programación</td>
-<td>—</td>
-<td>2</td>
-<td>IA, Pylint</td>
-</tr>
-<tr>
-<td>Accesibilidad / calidad</td>
-<td>WCAG</td>
-<td>1</td>
-<td>SonarCloud, Pylint</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Conclusión del registro:</strong> el programa original presenta problemas en 5 de las 10 categorías
-principales de OWASP (A01-A07), siendo los más graves la criptografía rota y las dos inyecciones
-SQL explotables (permite acceder como <em>admin</em> con <code>' OR '1'='1</code> sin contraseña). Ninguna prueba
-funcional "normal" los detectaría; solo el análisis estático y la revisión sistemática.</p>
+<p>| Categoría | CWE/OWASP | Problemas | Herramientas que lo detectaron |
+|---|---|---|---|---|
+| Criptografía rota (MD5 sin sal) | CWE-327 | 1 | Bandit, SonarCloud, IA |
+| Inyección SQL | CWE-89 / A03 | 3 (login, búsqueda y borrado) | Bandit, Semgrep, SonarCloud, IA |
+| Ejecución de código (eval) | CWE-95 | 1 | Bandit, Semgrep, SonarCloud, IA |
+| Inyección de comandos | CWE-78 / A03 | 1 | Bandit, Semgrep, SonarCloud, IA |
+| XSS reflejado / SSTI | CWE-79 | 2 (<code>termino\|safe</code>, <code>render_template_string</code>) | SonarCloud, Semgrep, IA |
+| Open redirect | CWE-601 | 1 | SonarCloud, Semgrep, IA |
+| Configuración peligrosa (debug, 0.0.0.0, CSRF off) | CWE-605/A05, A07 | 3 | Bandit, Semgrep, SonarCloud, IA |
+| Secretos en el código | CWE-259 | 2 (SECRET_KEY, CLAVE_BD) + credenciales admin | Bandit, IA |
+| CSRF sin token en formularios | A01 | 5 formularios | Semgrep, SonarCloud, IA |
+| NaN injection | CWE-20 | 1 | Semgrep, IA |
+| Errores de programación | — | 2 | IA, Pylint |
+| Accesibilidad / calidad | WCAG | 2 | SonarCloud, Pylint |</p>
+<p><strong>Conclusión del registro:</strong> el programa original presenta problemas en 7 de las 10 categorías
+principales de OWASP (A01-A07), siendo los más graves la criptografía rota, tres inyecciones SQL
+explotables (acceso como <em>admin</em> con <code>' OR '1'='1</code> sin contraseña), la evaluación de código con
+<code>eval()</code>/<code>os.system</code> y los XSS reflejados. Ninguna prueba funcional "normal" los detectaría; solo
+el análisis estático y la revisión sistemática.</p>
 <hr />
 <h2>8. Reflexión sobre las herramientas (aprendizaje)</h2>
 <ol>
-<li><strong>Se complementan:</strong> Bandit detectó los 7 problemas de seguridad Python de un vistazo;
-   Semgrep amplió con NaN injection y CSRF; SonarCloud dio el mapa completo con severidades y
-   calidad; la IA explicó el "porqué" y detectó errores lógicos (C9) que los SAST no ven.</li>
+<li><strong>Se complementan:</strong> Bandit detectó los 10 problemas de seguridad Python de un vistazo;
+   Semgrep amplió con NaN injection, open redirect y CSRF; SonarCloud dio el mapa completo con
+   severidades y calidad; la IA explicó el "porqué" y detectó errores lógicos (C9) que los SAST no ven.</li>
 <li><strong>Los falsos positivos existen:</strong> el aviso <code>django-no-csrf-token</code> de Semgrep aplica reglas de
    Django sobre plantillas de Flask. Hay que interpretar y contrastar, no copiar reportes.</li>
-<li><strong>Varias reglas marcan lo mismo:</strong> Semgrep reportó 16 hallazgos que corresponden a ~8 problemas
+<li><strong>Varias reglas marcan lo mismo:</strong> Semgrep reportó 28 hallazgos que corresponden a ~12 problemas
    reales (duplicación django/flask/sqlalchemy); la deduplicación requiere criterio.</li>
-<li><strong>Es reproducible:</strong> al volver a publicar el código original, SonarCloud reabrió exactamente las
-   mismas issues, confirmando la validez del registro.</li>
+<li><strong>Es reproducible:</strong> al ampliar el código con más defectos típicos y volver a publicarlo,
+   SonarCloud reanalizó y abrió exactamente las 13 issues esperadas, confirmando la validez del registro.</li>
 </ol>
 <hr />
 <h2>9. Conclusiones</h2>
@@ -688,7 +825,7 @@ funcional "normal" los detectaría; solo el análisis estático y la revisión s
 <li><strong>El análisis estático encuentra lo que las pruebas funcionales no ven.</strong> El programa "funcionaba",
    pero contenía criptografía rota y dos inyecciones SQL explotables (acceso como <em>admin</em> sin clave).</li>
 <li><strong>El objetivo del trabajo se cumplió:</strong> se investigaron y aplicaron 3+ herramientas y se <strong>registró
-   el problema que presenta el programa original</strong> (7 + 16 + 6 + 14 hallazgos), con tipo, severidad,
+   el problema que presenta el programa original</strong> (10 + 28 + 13 + 21 hallazgos), con tipo, severidad,
    ubicación, explicación y corrección recomendada.</li>
 <li><strong>Ninguna herramienta es infalible ni total:</strong> cruzando varias (SAST + SonarCloud + IA) se logra
    cobertura y contexto; también aparecen falsos positivos que exigen criterio profesional.</li>

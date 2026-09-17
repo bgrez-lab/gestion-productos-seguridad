@@ -2,8 +2,8 @@
 
 > **ACTUALIZADO:** el archivo `informe_capturas.docx` ya incluye las capturas embebidas,
 > generadas a partir de los datos reales de la API de SonarCloud y de los reportes exportados.
-> Muestran los **problemas identificados en el programa original** (SonarCloud con 6 issues
-> abiertas, Semgrep 16, Bandit 7, Pylint 9.46 y repositorio con el código original). **No es
+> Muestran los **problemas identificados en el programa original** (SonarCloud con 13 issues
+> abiertas, Semgrep 28, Bandit 10, Pylint 9.43 y repositorio con el código original). **No es
 > obligatorio tomar capturas a mano.**
 
 Si aun así quieres adjuntar las capturas reales del navegador (recomendado como anexo
@@ -17,7 +17,7 @@ las herramientas sobre el **programa original** (problemas identificados).
 
 ### 1. SonarCloud — Issues del programa original (obligatorio)
 - URL: https://sonarcloud.io/project/issues?id=bgrez-lab_gestion-productos-seguridad&resolved=false
-- **Qué capturar:** la lista de **6 issues abiertas** (5 vulnerabilidades + 1 bug) con su
+- **Qué capturar:** la lista de **13 issues abiertas** (11 vulnerabilidades + 2 bugs) con su
   severidad (Blocker, Critical…) y su ubicación.
 - Archivo sugerido: `captura_sonarcloud_issues.png`
 
@@ -44,7 +44,7 @@ las herramientas sobre el **programa original** (problemas identificados).
   ```
   semgrep scan --config auto
   ```
-  *(sobre el programa original: 16 hallazgos)*
+  *(sobre el programa original: 28 hallazgos)*
 
 > Sugerencia: con la tecla **Impr Pant** o con **Win+Shift+S** en Windows; guarda las
 > imágenes en la carpeta `evidencia/` del proyecto y súbelas como anexos en EVA.
