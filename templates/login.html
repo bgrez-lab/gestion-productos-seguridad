@@ -6,5 +6,8 @@
   <p><label>Clave: <input type="password" name="clave"></label></p>
   <p><button type="submit">Entrar</button></p>
 </form>
+{% if mensaje %}
+<p><b>{{ mensaje }}</b></p>
+{% endif %}
 <p><a href="{{ url_for('auth.registro') }}">¿No tienes cuenta? Regístrate</a></p>
 {% endblock %}

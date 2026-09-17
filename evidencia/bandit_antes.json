@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2026-09-17T22:52:09Z",
+  "generated_at": "2026-09-17T23:09:18Z",
   "metrics": {
     ".\\app.py": {
       "CONFIDENCE.HIGH": 0,
@@ -24,7 +24,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 68,
+      "loc": 86,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -37,7 +37,7 @@
       "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 12,
+      "loc": 13,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -55,28 +55,28 @@
       "skipped_tests": 0
     },
     ".\\productos.py": {
-      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.HIGH": 2,
       "CONFIDENCE.LOW": 1,
-      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.MEDIUM": 1,
       "CONFIDENCE.UNDEFINED": 0,
-      "SEVERITY.HIGH": 0,
+      "SEVERITY.HIGH": 1,
       "SEVERITY.LOW": 0,
-      "SEVERITY.MEDIUM": 1,
+      "SEVERITY.MEDIUM": 3,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 96,
+      "loc": 125,
       "nosec": 0,
       "skipped_tests": 0
     },
     "_totals": {
-      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.HIGH": 4,
       "CONFIDENCE.LOW": 2,
-      "CONFIDENCE.MEDIUM": 3,
+      "CONFIDENCE.MEDIUM": 4,
       "CONFIDENCE.UNDEFINED": 0,
-      "SEVERITY.HIGH": 3,
+      "SEVERITY.HIGH": 4,
       "SEVERITY.LOW": 1,
-      "SEVERITY.MEDIUM": 3,
+      "SEVERITY.MEDIUM": 5,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 266,
+      "loc": 314,
       "nosec": 0,
       "skipped_tests": 0
     }
@@ -123,7 +123,7 @@
       "test_name": "hardcoded_bind_all_interfaces"
     },
     {
-      "code": "29     \"\"\"\n30     return hashlib.md5(clave.encode(\"utf-8\")).hexdigest()\n31 \n",
+      "code": "30     \"\"\"\n31     return hashlib.md5(clave.encode(\"utf-8\")).hexdigest()\n32 \n",
       "col_offset": 11,
       "end_col_offset": 45,
       "filename": ".\\auth.py",
@@ -134,16 +134,16 @@
       },
       "issue_severity": "HIGH",
       "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
-      "line_number": 30,
+      "line_number": 31,
       "line_range": [
-        30
+        31
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b324_hashlib.html",
       "test_id": "B324",
       "test_name": "hashlib"
     },
     {
-      "code": "42         consulta = (\n43             \"SELECT * FROM usuarios WHERE usuario = '%s' AND hash_clave = '%s'\"\n44             % (usuario, hash_clave_plana(clave))\n45         )\n",
+      "code": "43         consulta = (\n44             \"SELECT * FROM usuarios WHERE usuario = '%s' AND hash_clave = '%s'\"\n45             % (usuario, hash_clave_plana(clave))\n46         )\n",
       "col_offset": 12,
       "end_col_offset": 79,
       "filename": ".\\auth.py",
@@ -154,10 +154,10 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 43,
+      "line_number": 44,
       "line_range": [
-        43,
-        44
+        44,
+        45
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",
@@ -204,7 +204,7 @@
       "test_name": "hashlib"
     },
     {
-      "code": "50     db = get_db()\n51     sql = \"SELECT * FROM productos WHERE nombre LIKE '%\" + termino + \"%'\"\n52     productos = db.execute(sql).fetchall()\n",
+      "code": "51     db = get_db()\n52     sql = \"SELECT * FROM productos WHERE nombre LIKE '%\" + termino + \"%'\"\n53     productos = db.execute(sql).fetchall()\n",
       "col_offset": 10,
       "end_col_offset": 56,
       "filename": ".\\productos.py",
@@ -215,13 +215,73 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 51,
+      "line_number": 52,
       "line_range": [
-        51
+        52
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",
       "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "118     # Hallazgo B307 (Bandit): eval sobre entrada del usuario.\n119     total = eval(expresion)\n120     return f\"Total con impuesto (19%): {total}\"\n",
+      "col_offset": 12,
+      "end_col_offset": 27,
+      "filename": ".\\productos.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Use of possibly insecure function - consider using safer ast.literal_eval.",
+      "line_number": 119,
+      "line_range": [
+        119
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b307-eval",
+      "test_id": "B307",
+      "test_name": "blacklist"
+    },
+    {
+      "code": "130     # consulta SQL. Payload de ejemplo:  1 OR '1'='1\n131     db.execute(\"DELETE FROM productos WHERE id = \" + str(producto_id))\n132     db.commit()\n",
+      "col_offset": 15,
+      "end_col_offset": 50,
+      "filename": ".\\productos.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 89,
+        "link": "https://cwe.mitre.org/data/definitions/89.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Possible SQL injection vector through string-based query construction.",
+      "line_number": 131,
+      "line_range": [
+        131
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+      "test_id": "B608",
+      "test_name": "hardcoded_sql_expressions"
+    },
+    {
+      "code": "147     # Hallazgo B605 (Bandit): os.system con datos del usuario.\n148     os.system(\"echo importacion >> \" + archivo)\n149     db = get_db()\n",
+      "col_offset": 4,
+      "end_col_offset": 47,
+      "filename": ".\\productos.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "HIGH",
+      "issue_text": "Starting a process with a shell, possible injection detected, security issue.",
+      "line_number": 148,
+      "line_range": [
+        148
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b605_start_process_with_a_shell.html",
+      "test_id": "B605",
+      "test_name": "start_process_with_a_shell"
     }
   ]
 }

@@ -10,6 +10,7 @@ from flask import (
     flash,
     redirect,
     render_template,
+    render_template_string,
     request,
     session,
     url_for,
@@ -47,7 +48,14 @@ def login():
         if fila:
             session["usuario"] = fila["usuario"]
             session["usuario_id"] = fila["id"]
-            return redirect(url_for("auth.login"))
+            # Aviso de bienvenida que se muestra debajo del formulario.
+            mensaje = "bienvenido " + fila["usuario"]
+            # VULNERABILIDAD (redirect abierto): el parámetro "next" se usa
+            # sin validar, permitiendo redirigir a sitios externos.
+            siguiente = request.args.get("next")
+            if siguiente:
+                return redirect(siguiente)
+            return render_template("login.html", mensaje=mensaje)
         flash("Usuario o contraseña incorrectos.")
     return render_template("login.html")
 
@@ -76,6 +84,22 @@ def registro():
         flash("Registro correcto, ya puede iniciar sesión.")
         return redirect(url_for("auth.login"))
     return render_template("registro.html")
+
+
+@auth_bp.route("/perfil")
+def perfil():
+    """Página de perfil del usuario.
+
+    VULNERABILIDAD (SSTI / inyección de plantillas): el nombre del usuario
+    se interpola con render_template_string sin saneamiento previo.
+    """
+    usuario = session.get("usuario", "invitado")
+    plantilla = (
+        "<h2>Perfil de usuario</h2>"
+        "<p>Esta es tu pestaña personal, ¡nos alegra tenerte aquí, "
+        "{{ nombre }}!</p>"
+    )
+    return render_template_string(plantilla, nombre=usuario)
 
 
 @auth_bp.route("/logout")

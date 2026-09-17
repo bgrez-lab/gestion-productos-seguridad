@@ -16,6 +16,7 @@ from flask import (
     url_for,
 )
 import datetime  # W0611 (pylint): import declarado pero nunca utilizado.
+import os
 
 from database import get_db
 
@@ -104,12 +105,50 @@ def editar(producto_id):
     return render_template("formulario.html", producto=producto)
 
 
+@productos_bp.route("/impuesto")
+def impuesto():
+    """Calcula el precio con impuesto a partir de una expresión.
+
+    VULNERABILIDAD (Bandit B307): eval() sobre una expresión controlada
+    por el usuario permite ejecución de código arbitrario.
+    """
+    if not sesion_activa():
+        return redirect(url_for("auth.login"))
+    expresion = request.args.get("e", "0")
+    # Hallazgo B307 (Bandit): eval sobre entrada del usuario.
+    total = eval(expresion)
+    return f"Total con impuesto (19%): {total}"
+
+
 @productos_bp.route("/<int:producto_id>/eliminar", methods=["POST"])
 def eliminar(producto_id):
     """Elimina un producto por su identificador."""
     if not sesion_activa():
         return redirect(url_for("auth.login"))
     db = get_db()
-    db.execute("DELETE FROM productos WHERE id = ?", (producto_id,))
+    # VULNERABILIDAD (Bandit B608): el id se concatena directamente en la
+    # consulta SQL. Payload de ejemplo:  1 OR '1'='1
+    db.execute("DELETE FROM productos WHERE id = " + str(producto_id))
+    db.commit()
+    return redirect(url_for("productos.listar"))
+
+
+@productos_bp.route("/importar", methods=["POST"])
+def importar():
+    """Importa un lote de productos desde un archivo de la carpeta local.
+
+    VULNERABILIDAD (Bandit B605): el nombre del archivo se concatena en un
+    comando de shell, permitiendo inyección de comandos. Payload de ejemplo:
+    lote.txt; ipconfig
+    """
+    if not sesion_activa():
+        return redirect(url_for("auth.login"))
+    archivo = request.form.get("archivo", "lote.txt")
+    # Hallazgo B605 (Bandit): os.system con datos del usuario.
+    os.system("echo importacion >> " + archivo)
+    db = get_db()
+    db.execute(
+        "INSERT INTO productos (nombre, precio, stock) VALUES ('Importado', 0, 0)"
+    )
     db.commit()
     return redirect(url_for("productos.listar"))

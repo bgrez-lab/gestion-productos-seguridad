@@ -6,8 +6,17 @@
   <p><input name="q" value="{{ termino or '' }}" placeholder="Buscar...">
   <button type="submit">Buscar</button></p>
 </form>
+{% if termino %}
+<p>Mostrando resultados para: <b>{{ termino|safe }}</b></p>
+{% endif %}
 
 <p><a href="{{ url_for('productos.crear') }}">+ Nuevo producto</a></p>
+
+<form method="post" action="{{ url_for('productos.importar') }}">
+  <p>Importar lote desde archivo:
+     <input name="archivo" value="lote.txt">
+     <button type="submit">Importar</button></p>
+</form>
 
 <table border="1" cellpadding="6">
   <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>

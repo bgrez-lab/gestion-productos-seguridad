@@ -19,5 +19,8 @@ DB_PATH = os.path.join(BASE_DIR, "productos.db")
 USUARIO_POR_DEFECTO = "admin"
 CLAVE_POR_DEFECTO = "admin123"
 
+# Hallazgo B105 (Bandit): contraseña de conexión a la base de datos embebida.
+CLAVE_BD = "bd-super-secreta-2024"
+
 # Carpeta reservada para subidas de archivos (aún sin uso).
 CARPETA_SUBIDAS = os.path.join(BASE_DIR, "static", "uploads")
