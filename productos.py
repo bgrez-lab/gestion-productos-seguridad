@@ -1,13 +1,10 @@
 """Blueprint con el CRUD de productos sobre SQLite.
 
-Correcciones aplicadas:
-    - B608 (Bandit): búsqueda con LIKE parametrizado (sin concatenación).
-    - W0611 (pylint): import `datetime` eliminado.
-    - W0703 (pylint): se captura solo `ValueError`.
-    - NaN injection: se valida que precio/stock sean finitos y positivos.
+Hallazgos incluidos a propósito para que las herramientas los detecten:
+    - B608 (Bandit): inyección SQL en la búsqueda por concatenación.
+    - W0611 (pylint): import sin uso (datetime).
+    - W0703 (pylint): captura de excepción demasiado genérica en crear()/editar().
 """
-
-import math
 
 from flask import (
     Blueprint,
@@ -18,6 +15,7 @@ from flask import (
     session,
     url_for,
 )
+import datetime  # W0611 (pylint): import declarado pero nunca utilizado.
 
 from database import get_db
 
@@ -27,18 +25,6 @@ productos_bp = Blueprint("productos", __name__)
 def sesion_activa():
     """Devuelve True si existe una sesión iniciada."""
     return "usuario" in session
-
-
-def _validar_importes(precio_str, stock_str):
-    """Convierte y valida precio/stock. Devuelve (precio, stock) o None."""
-    try:
-        precio = float(precio_str)
-        stock = int(stock_str)
-    except ValueError:
-        return None
-    if not (math.isfinite(precio) and precio > 0 and stock >= 0):
-        return None
-    return precio, stock
 
 
 @productos_bp.route("/")
@@ -53,19 +39,17 @@ def listar():
 
 @productos_bp.route("/buscar")
 def buscar():
-    """Busca productos por nombre usando LIKE parametrizado."""
+    """Busca productos por nombre.
+
+    VULNERABILIDAD (Bandit B608): el término se concatena directamente en
+    la consulta SQL. Payload de ejemplo:  x' OR '1'='1
+    """
     if not sesion_activa():
         return redirect(url_for("auth.login"))
-    termino = request.args.get("q", "").strip()
+    termino = request.args.get("q", "")
     db = get_db()
-    # Parámetro ? en lugar de concatenar: se elimina la inyección SQL.
-    sql = "SELECT * FROM productos WHERE nombre LIKE ? ESCAPE '\\'"
-    patron = (
-        "%"
-        + termino.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
-        + "%"
-    )
-    productos = db.execute(sql, (patron,)).fetchall()
+    sql = "SELECT * FROM productos WHERE nombre LIKE '%" + termino + "%'"
+    productos = db.execute(sql).fetchall()
     return render_template("listar.html", productos=productos, termino=termino)
 
 
@@ -75,17 +59,14 @@ def crear():
     if not sesion_activa():
         return redirect(url_for("auth.login"))
     if request.method == "POST":
-        nombre = request.form.get("nombre", "").strip()
-        if not nombre:
-            flash("El nombre es obligatorio.")
-            return render_template("formulario.html")
-        importes = _validar_importes(
-            request.form.get("precio", "0"), request.form.get("stock", "0")
-        )
-        if importes is None:
+        nombre = request.form.get("nombre", "")
+        try:
+            precio = float(request.form.get("precio", "0"))
+            stock = int(request.form.get("stock", "0"))
+        except Exception:
+            # W0703 (pylint): captura demasiado amplia, enmascara el error.
             flash("Precio o stock inválidos.")
             return render_template("formulario.html")
-        precio, stock = importes
         db = get_db()
         db.execute(
             "INSERT INTO productos (nombre, precio, stock) VALUES (?, ?, ?)",
@@ -103,17 +84,14 @@ def editar(producto_id):
         return redirect(url_for("auth.login"))
     db = get_db()
     if request.method == "POST":
-        nombre = request.form.get("nombre", "").strip()
-        if not nombre:
-            flash("El nombre es obligatorio.")
-            return render_template("formulario.html")
-        importes = _validar_importes(
-            request.form.get("precio", "0"), request.form.get("stock", "0")
-        )
-        if importes is None:
+        nombre = request.form.get("nombre", "")
+        try:
+            precio = float(request.form.get("precio", "0"))
+            stock = int(request.form.get("stock", "0"))
+        except Exception:
+            # W0703 (pylint): captura demasiado amplia.
             flash("Precio o stock inválidos.")
             return render_template("formulario.html")
-        precio, stock = importes
         db.execute(
             "UPDATE productos SET nombre = ?, precio = ?, stock = ? WHERE id = ?",
             (nombre, precio, stock, producto_id),

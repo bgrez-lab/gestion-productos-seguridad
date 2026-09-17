@@ -2,7 +2,6 @@
 {% block contenido %}
 <h2>{{ "Editar producto" if producto else "Nuevo producto" }}</h2>
 <form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <p><label>Nombre: <input name="nombre" value="{{ producto.nombre if producto else '' }}"></label></p>
   <p><label>Precio: <input name="precio" value="{{ producto.precio if producto else '' }}"></label></p>
   <p><label>Stock: <input name="stock" value="{{ producto.stock if producto else '' }}"></label></p>
