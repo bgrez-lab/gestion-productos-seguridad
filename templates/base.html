@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{% block titulo %}Gesti&oacute;n de productos{% endblock %}</title>
+</head>
+<body>
+  <nav>
+    {% if session.usuario %}
+      <a href="{{ url_for('productos.listar') }}">Inicio</a> |
+      <a href="{{ url_for('productos.crear') }}">Nuevo</a> |
+      <a href="{{ url_for('auth.logout') }}">Salir ({{ session.usuario }})</a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}">Entrar</a> |
+      <a href="{{ url_for('auth.registro') }}">Registrarse</a>
+    {% endif %}
+  </nav>
+  <hr>
+  {% with mensajes = get_flashed_messages() %}
+    {% if mensajes %}
+      <ul>
+        {% for m in mensajes %}<li>{{ m }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  {% block contenido %}{% endblock %}
+</body>
+</html>

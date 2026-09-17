@@ -1,0 +1,20 @@
+# Entorno virtual y Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Base de datos (se crea sola al ejecutar app.py)
+*.db
+*.sqlite3
+
+# SonarQube / SonarCloud (archivos de análisis temporal)
+.scannerwork/
+.sonar/
+
+# Cobertura
+.coverage
+htmlcov/
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
