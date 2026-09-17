@@ -1,13 +1,15 @@
 ﻿{
     "quality_gate":  "OK",
-    "CODE_SMELL":  0,
-    "BUG":  0,
-    "VULNERABILITY":  0,
-    "conditions":  [
-                       "new_reliability_rating=1",
-                       "new_security_rating=1",
-                       "new_maintainability_rating=1",
-                       "new_duplicated_lines_density=0.0",
-                       "new_security_hotspots_reviewed=100.0"
-                   ]
+    "condiciones":  [
+                        "new_reliability_rating=1 required GT 1",
+                        "new_security_rating=1 required GT 1",
+                        "new_maintainability_rating=1 required GT 1",
+                        "new_duplicated_lines_density=0.0 required GT 3",
+                        "new_security_hotspots_reviewed=100.0 required LT 100"
+                    ],
+    "issues_abiertas":  6,
+    "por_tipo":  [
+                     "VULNERABILITY:5",
+                     "BUG:1"
+                 ]
 }

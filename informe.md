@@ -14,10 +14,13 @@ secretos expuestos) llegan a producción precisamente porque nunca se analizó e
 Las herramientas de análisis estático (SAST) y los linters permiten detectar este tipo de
 problemas de forma temprana, automatizada y económica.
 
-Este trabajo investiga tres herramientas complementarias (**Bandit, Semgrep y SonarCloud**)
-y las aplica sobre una aplicación web propia (CRUD de productos con autenticación y base de
-datos SQLite). El ejercicio se completa con una revisión asistida por IA (Claude) y con la
-corrección de los hallazgos para demostrar la mejora medida antes/después.
+El objetivo de este trabajo es **investigar y aplicar al menos tres herramientas de análisis
+de código y registrar los problemas que presenta el programa original**. Para ello se desarrolló
+una aplicación web propia (CRUD de productos con autenticación y base de datos SQLite) que incluye,
+deliberadamente, defectos clásicos de las aplicaciones reales, y se analizó **sin corregir nada**:
+el código entregado es la versión original tal como fue analizada. El informe registra cada
+problema detectado por **Bandit, Semgrep, SonarCloud** y una revisión asistida por IA (Claude),
+indicando tipo, severidad, ubicación, explicación y la corrección recomendada.
 
 ---
 
@@ -26,23 +29,28 @@ corrección de los hallazgos para demostrar la mejora medida antes/después.
 ### 2.1 Bandit — SAST orientado a seguridad para Python
 - **Qué es:** analizador estático de seguridad para Python, oficial de PyCQA; recorre el AST
   buscando patrones de riesgo conocidos (B-series: B201 debug, B324 MD5, B608 SQL inyección, B105 secretos).
-- **Uso:** `bandit -r . -x .venv` (formato texto, JSON, HTML).
+- **Uso:** `bandit -r . -x .venv -f json -o evidencia/bandit_antes.json`.
+- **Resultado sobre el programa original:** **7 hallazgos** (3 High, 3 Medium, 1 Low).
 
 ### 2.2 Semgrep — SAST de reglas (gratuito/open source)
 - **Qué es:** analizador por *patrones* multiplataforma; busca código con reglas YAML
   (estilo grep con sintaxis de programación). Corre cientos de reglas de seguridad de la comunidad.
-- **Uso:** `semgrep scan --config auto --json -o reporte.json`.
+- **Uso:** `semgrep scan --config auto --json -o evidencia/semgrep_scan.json`.
+- **Resultado sobre el programa original:** **16 hallazgos** en 14 ubicaciones (varias reglas
+  coinciden sobre la misma línea: django/flask/sqlalchemy).
 
 ### 2.3 SonarCloud — Plataforma integral de calidad de código (SAST en la nube)
-- **Qué es:** la versión cloud de SonarQube. Analiza 30+ lenguajes, clasifica issues en
-  *Vulnerability / Bug / Code Smell* con severidad, calcula **Quality Gates** (rojo/verde) y
-  detecta problemas de mantenibilidad, duplicación y cobertura.
-- **Uso:** cuenta en sonarcloud.io conectada al repositorio GitHub. Análisis automático en
-  cada push (integración vía GitHub App).
+- **Qué es:** la versión cloud de SonarQube. Clasifica issues en *Vulnerability / Bug / Code Smell*
+  con severidad, calcula **Quality Gates** y detecta problemas de mantenibilidad, duplicación y cobertura.
+- **Uso:** cuenta en sonarcloud.io conectada al repositorio GitHub; análisis automático en cada push
+  (integración vía GitHub App). No requirió Docker ni Java 17 (necesarios para SonarQube local).
+- **Resultado sobre el programa original:** **6 issues abiertas** (5 vulnerabilidades + 1 bug).
 
-### 2.4 Herramientas complementarias
-- **Pylint** (linter de estilo/calidad) y **pip-audit** (vulnerabilidades en dependencias),
-  ya disponibles en el proyecto; **Claude** (revisión de código asistida por IA, se documenta aparte).
+### 2.4 Revisión por IA (Claude) — herramienta complementaria
+- **Qué es:** revisión línea a línea del código asistida por un modelo de lenguaje
+  ("AI code review"), que además de patrones detecta problemas de lógica de negocio.
+- **Resultado sobre el programa original:** **14 hallazgos** (8 de seguridad, 2 errores,
+  4 malas prácticas/calidad), documentados en `evidencia/revision_claude.md`.
 
 ### 2.5 Cuadro comparativo
 
@@ -50,18 +58,18 @@ corrección de los hallazgos para demostrar la mejora medida antes/después.
 |---|---|---|---|
 | Categoría | SAST (seguridad) | SAST (reglas) | Plataforma calidad + SAST |
 | Instalación | `pip install bandit` | `pip install semgrep` | Nube + GitHub App |
-| Lenguajes | Python | C/Js/Python/Go, etc. (64+) | 30+ lenguajes |
+| Lenguajes | Python | 64+ lenguajes | 30+ lenguajes |
 | Detección principal | Patrones de riesgo Python | Reglas personalizables (YAML) | Bugs, vulns, code smells, duplicación |
 | Quality Gate | No | No | **Sí** (rojo/verde) |
-| Alertas por severidad | Sí (low/med/high) | Sí (warning/error) | Sí (info…blocker) |
+| Alertas por severidad | Sí (low/medium/high) | Sí (warning/error) | Sí (info…blocker) |
 | Integración CI/CD | Script | Script | Automática en cada push |
 | Cobertura de pruebas | No | No | Sí |
-| Ventajas | Simple, rápido, enfocado en seguridad Python | Multilenguaje, reglas escribibles a medida, gratuito | Dashboard completo, Quality Gate, duplicación/cobertura |
-| Desventajas | Solo Python, sin reglas propias | Sirve de configuración, puede dar falsos positivos si se adaptan reglas de otros frameworks | Depende de la nube; el plan gratuito exige repositorio público |
+| Ventajas | Simple, rápido, enfocado en seguridad Python | Multilenguaje, reglas a medida, gratuito | Dashboard completo, Quality Gate, análisis continuo |
+| Desventajas | Solo Python, sin reglas propias | Falsos positivos si se aplican reglas de otros frameworks | Depende de la nube; plan gratuito exige repo público |
 
 ---
 
-## 3. Descripción del programa desarrollado
+## 3. Descripción del programa analizado (versión original)
 
 Aplicación web **Flask + SQLite** que gestiona productos de un catálogo:
 
@@ -72,142 +80,179 @@ Aplicación web **Flask + SQLite** que gestiona productos de un catálogo:
 Esquema:
 
 ```
-app.py            → arranque, configuración de seguridad (CSRF, secret key)
+app.py            → arranque y configuración de la aplicación
 auth.py           → registro, login, logout
 productos.py      → CRUD de productos
 database.py       → conexión SQLite e inicialización del esquema
-config.py         → configuración (clave, rutas)
+config.py         → configuración (clave, credenciales)
 templates/        → plantillas Jinja2 (base, login, registro, listar, formulario)
 ```
 
-Para poder *demostrar* la detección de las herramientas, la versión inicial incluía
-**a propósito** defectos clásicos de aplicaciones reales: contraseñas con MD5, consultas SQL
-por concatenación, clave secreta embebida, `debug=True`, excepciones demasiado amplias e
-imports sin uso.
+El código entregado en la rama `main` es la **versión original, sin correcciones**; los hallazgos
+están además señalizados con comentarios en el propio código (p. ej. `# Hallazgo B201 (Bandit)`)
+para facilitar su revisión. Este trabajo **no corrige el programa**: su alcance es identificar y
+registrar los problemas detectados.
 
 ---
 
 ## 4. Metodología
 
-1. **Preparación:** se configuró el control de versiones (Git), un `.gitignore` correcto y se
-   publicó el proyecto en GitHub (`bgrez-lab/gestion-productos-seguridad`).
-2. **Análisis inicial (baseline):** se ejecutaron Bandit, pylint, Semgrep y SonarCloud sobre la
-   versión vulnerable y se documentó cada hallazgo. Se completó con una revisión línea a línea
-   asistida por IA (Claude).
-3. **Análisis de resultados:** para cada hallazgo se registró tipo, severidad, ubicación,
-   explicación y corrección propuesta.
-4. **Corrección:** se aplicaron las correcciones (hash seguro, SQL parametrizado, CSRF,
-   claves por entorno, validaciones).
-5. **Re-análisis:** se volvió a ejecutar cada herramienta sobre el código corregido para cuantificar
-   la mejora; SonarCloud se re-analiza solo en cada push.
+1. **Publicación del proyecto:** se inicializó Git, se configuró `.gitignore` y se publicó el
+   proyecto en GitHub (`bgrez-lab/gestion-productos-seguridad`).
+2. **Análisis SAST/Bandit:** ejecución de Bandit sobre los módulos Python del programa original.
+3. **Análisis Semgrep:** ejecución con `--config auto`, guardando el reporte JSON.
+4. **Análisis SonarCloud:** conexión del repositorio y análisis automático; registro de las issues abiertas.
+5. **Revisión por IA:** lectura del código con Claude, con 14 hallazgos documentados.
+6. **Registro:** para cada hallazgo se documentó tipo, severidad, ubicación exacta (archivo:línea),
+   explicación del riesgo y corrección recomendada.
+7. **Verificación de reproducibilidad:** el código original se volvió a publicar en `main` y
+   SonarCloud reabrió las issues, confirmando que los problemas registrados existen y son reproducibles.
 
 ---
 
-## 5. Resultados del análisis
+## 5. Registro de problemas detectados en el programa original
 
-### 5.1 Resumen antes / después
+### 5.1 Resumen por herramienta
 
-| Herramienta | Versión vulnerable | Versión corregida | Mejora |
+| Herramienta | Hallazgos | Severidades destacadas | Reporte |
 |---|---|---|---|
-| Bandit | 7 hallazgos (2 high) | **0** | 100 % |
-| Semgrep | 16 hallazgos | 4 (falsos positivos) | 12 detectados reales |
-| SonarCloud | 9 issues (8 vulnerabilidades) | **0 abiertas** (Quality Gate OK) | 100 % |
-| Pylint | 9.46/10 | **9.94/10** | +0.48 |
-| Claude (IA) | 14 hallazgos | verificados corregidos | — |
+| Bandit | **7** | 3 High · 3 Medium · 1 Low | `evidencia/bandit_antes.json` |
+| Semgrep | **16** | 9 error / 7 warning | `evidencia/semgrep_scan.json` |
+| SonarCloud | **6** | 1 Blocker · 2 Critical · 1 Major(MINOR) · 2 Major | `evidencia/sonarcloud_issues.json` |
+| IA (Claude) | **14** | 3 crítica · 4 alta · 2 media · 5 baja | `evidencia/revision_claude.md` |
 
-### 5.2 Hallazgo más importante 1: contraseñas con MD5 (crítico)
+### 5.2 Bandit — 7 hallazgos
 
-- **Tipo:** vulnerabilidad — **Severidad:** crítica (Bandit B324; SonarCloud S4790; IA C1).
-- **Ubicación:** `auth.py:30` y `database.py:61` (semilla del admin).
-- **Explicación:** MD5 es criptográficamente roto; permite ataques de diccionario y rainbow tables.
-- **Corrección:** `werkzeug.security.generate_password_hash()` (PBKDF2 con salt) para crear y
-  `check_password_hash()` para verificar.
-
-### 5.3 Hallazgo 2: inyección SQL (crítico)
-
-- **Tipo:** vulnerabilidad — **Severidad:** alta (Bandit B608; Semgrep tainted-sql-string; IA C2-C3).
-- **Ubicación:** `auth.py:43` (login) y `productos.py:51` (búsqueda).
-- **Explicación:** el dato del usuario se concatena en la cadena SQL. Payload `' OR '1'='1`
-  para evadir el login.
-- **Corrección:** consultas parametrizadas: `SELECT ... WHERE usuario = ?` y `LIKE ? ESCAPE '\'`.
-
-### 5.4 Hallazgo 3: CSRF desactivado (crítico según SonarCloud, S4502)
-
-- **Tipo:** vulnerabilidad — **Severidad:** crítica (SonarCloud) / alta (IA C7).
-- **Ubicación:** `app.py:17` y todos los formularios POST.
-- **Explicación:** sin token CSRF, un sitio malicioso puede hacer que el navegador de una
-  sesión autenticada ejecute acciones (crear, editar, **eliminar** productos).
-- **Corrección:** `CSRFProtect(app)` de Flask-WTF + campo oculto `csrf_token` en cada formulario.
-
-### 5.5 Hallazgo 4: secreto y credenciales embebidos (alto)
-
-- **Tipo:** vulnerabilidad — **Severidad:** alta (Bandit B105; IA C4-C5).
-- **Ubicación:** `config.py:11`, `config.py:19-20`.
-- **Explicación:** quien tenga el repositorio puede forjar cookies de sesión y conocer el acceso
-  del admin por defecto.
-- **Corrección:** `SECRET_KEY` desde variable de entorno; se eliminan las credenciales por defecto.
-
-### 5.6 Hallazgo 5: servidor en modo debug (alto)
-
-- **Tipo:** vulnerabilidad — **Severidad:** alta (Bandit B201; SonarCloud S8392+S4507; Semgrep).
-- **Ubicación:** `app.py:44`.
-- **Explicación:** `debug=True` y host `0.0.0.0` exponen el depurador de Werkzeug, que permite
-  ejecución remota de código, y filtran información sensible en errores.
-- **Corrección:** `host="127.0.0.1"` y `debug` controlado por variable de entorno.
-
-### 5.7 Otros hallazgos corregidos
-
-| # | Tipo | Severidad | Ubicación | Hallazgo | Corrección |
+| # | Test | Severidad | CWE | Ubicación | Problema detectado |
 |---|---|---|---|---|---|
-| 6 | Vulnerabilidad | Media | `productos.py:64,89` | NaN injection en precio/stock | Validar con `math.isfinite` y rangos |
-| 7 | Error | Media | `auth.py:50` | Login exitoso redirigía al propio login | Redirigir a `productos.listar` |
-| 8 | Mala práctica | Baja | `auth.py:72`, `productos.py:66,91` | `except Exception` genérico | Capturar `sqlite3.IntegrityError`/`ValueError` |
-| 9 | Calidad | Baja | `productos.py:18` | Import `datetime` sin uso | Eliminar la línea |
-| 10 | Calidad | Baja | `templates/listar.html:6` | Campo de búsqueda sin `label` (accesibilidad) | Añadir `label for` + `id` |
+| B1 | B201 `flask_debug_true` | High | CWE-94 | `app.py:44` | `debug=True` expone el depurador Werkzeug (ejecución de código arbitrario) |
+| B2 | B104 `hardcoded_bind_all_interfaces` | Medium | CWE-605 | `app.py:44` | Host `0.0.0.0`: la app queda accesible desde toda la red |
+| B3 | B324 `hashlib` | High | CWE-327 | `auth.py:30` | Hash MD5 para contraseñas (criptografía rota) |
+| B4 | B608 `hardcoded_sql_expressions` | Medium | CWE-89 | `auth.py:43` | Consulta SQL por concatenación (login) |
+| B5 | B105 `hardcoded_password_string` | Low | CWE-259 | `config.py:11` | Secreto embebido en el código fuente |
+| B6 | B324 `hashlib` | High | CWE-327 | `database.py:61` | Seed del admin con MD5 |
+| B7 | B608 `hardcoded_sql_expressions` | Medium | CWE-89 | `productos.py:51` | Consulta SQL por concatenación (búsqueda `LIKE`) |
 
-### 5.8 Falsos positivos (aprendizaje)
-Semgrep reportó 4 avisos de "no-csrf-token" aplicando reglas **de Django** sobre plantillas de
-**Flask**; tras la corrección CSRF, la app quedó protegida (con Flask-WTF) y esos avisos son
-falsos positivos. Esto demuestra que **ninguna herramienta es infalible** y que conviene
-contrastar varias antes de afirmar que algo es seguro.
+### 5.3 Semgrep — 16 hallazgos
+
+| # | Severidad | Regla | Ubicación | Problema detectado |
+|---|---|---|---|---|
+| S1 | warning | `python.flask.security.audit.app-run-param-conf` | `app.py:44` | Servidor expuesto públicamente (`host=0.0.0.0`) |
+| S2 | warning | `python.flask.security.audit.debug-enabled` | `app.py:44` | `debug=True` en producción |
+| S3 | warning | `python.django.security.injection.sql.sql-injection` | `auth.py:37` | Dato del request llega a `execute()` |
+| S4 | error | `python.django.security.injection.tainted-sql-string` | `auth.py:42` | SQL construido con datos del usuario |
+| S5 | error | `python.flask.security.injection.tainted-sql-string` | `auth.py:42` | Ídem (regla Flask) |
+| S6 | warning | `python.lang.security.audit.formatted-sql-query` | `auth.py:46` | Posible SQL formateado |
+| S7 | error | `python.sqlalchemy.security.sqlalchemy-execute-raw` | `auth.py:46` | Concatenación con entrada no confiable |
+| S8 | error | `python.django.security.injection.tainted-sql-string` | `productos.py:51` | SQL construido en búsqueda |
+| S9 | error | `python.flask.security.injection.tainted-sql-string` | `productos.py:51` | Ídem (regla Flask) |
+| S10 | error | `python.sqlalchemy.security.sqlalchemy-execute-raw` | `productos.py:52` | Concatenación en `execute()` |
+| S11 | error | `python.flask.security.injection.nan-injection` | `productos.py:64` | Entrada del usuario a `float()` (NaN injection) |
+| S12 | error | `python.flask.security.injection.nan-injection` | `productos.py:89` | Entrada del usuario a `float()`/`int()` |
+| S13 | warning | `python.django.security.django-no-csrf-token` | `formulario.html:4` | Formulario sin token CSRF |
+| S14 | warning | `python.django.security.django-no-csrf-token` | `listar.html:22` | Formulario sin token CSRF |
+| S15 | warning | `python.django.security.django-no-csrf-token` | `login.html:4` | Formulario sin token CSRF |
+| S16 | warning | `python.django.security.django-no-csrf-token` | `registro.html:4` | Formulario sin token CSRF |
+
+Nota: S3–S10 son la misma inyección SQL vista por varias familias de reglas (django/flask/sqlalchemy);
+el problema real son **dos** consultas concatenadas (`auth.py:43` y `productos.py:51`).
+
+### 5.4 SonarCloud — 6 issues abiertas
+
+| # | Regla | Severidad | Tipo | Ubicación | Problema detectado |
+|---|---|---|---|---|---|
+| Q1 | `python:S4502` | Critical | Vulnerabilidad | `app.py:17` | Protección CSRF desactivada |
+| Q2 | `python:S8392` | Blocker | Vulnerabilidad | `app.py:44` | Aplicación vinculada a todas las interfaces |
+| Q3 | `python:S4507` | Minor | Vulnerabilidad | `app.py:44` | Depuración (`debug`) habilitada |
+| Q4 | `python:S4790` | Critical | Vulnerabilidad | `auth.py:30` | Hashing de datos inseguro (MD5) |
+| Q5 | `python:S4790` | Critical | Vulnerabilidad | `database.py:61` | Hashing de datos inseguro (MD5) |
+| Q6 | `Web:InputWithoutLabelCheck` | Major | Bug (accesibilidad) | `listar.html:6` | Campo de búsqueda sin `label` |
+
+Nota: en un análisis anterior la plataforma reportó además 3 issues de tipo `githubactions` relativas
+al workflow de CI (pin de acciones, versionado de dependencias); dicho archivo se retiró del repositorio
+(la integración usa la GitHub App de SonarCloud) y, por tanto, el código del programa registra las
+**6 issues** de la tabla, que quedan **abiertas** en el análisis del código entregado.
+
+### 5.5 Revisión por IA (Claude) — 14 hallazgos
+
+Vulnerabilidades (8):
+
+| # | Hallazgo | Severidad | Ubicación |
+|---|---|---|---|
+| C1 | Contraseñas con MD5 sin sal | Crítica | `auth.py:24-30`, `database.py:59-62` |
+| C2 | Inyección SQL en login | Crítica | `auth.py:40-46` |
+| C3 | Inyección SQL en búsqueda | Alta | `productos.py:49-52` |
+| C4 | SECRET_KEY embebida en código | Alta | `config.py:11` |
+| C5 | Credenciales por defecto (`admin/admin123`) | Alta | `config.py:19-20`, `database.py:60-62` |
+| C6 | `debug=True` + host `0.0.0.0` | Alta | `app.py:42-44` |
+| C7 | CSRF ausente en formularios | Media | `templates/*.html` |
+| C8 | NaN injection en precio/stock | Media | `productos.py:64,89` |
+
+Errores de programación (2): C9 login exitoso redirige al propio login (`auth.py:50`); C10
+excepción demasiado amplia (`auth.py:72`, `productos.py:66,91`).
+
+Malas prácticas / calidad (4): C11 import sin uso (`productos.py:18`); C12 sin validación de
+entrada (nombres vacíos, claves triviales); C13 sesión sin renovación ni cookie `Secure`/`SameSite`;
+C14 sin límite de intentos de login (fuerza bruta).
 
 ---
 
-## 6. Evidencia generada
+## 6. Análisis de los problemas registrados
 
-Toda la evidencia está en la carpeta `evidencia/` del repositorio:
+Agrupando los hallazgos de las cuatro fuentes (se contó cada problema real una sola vez):
 
-- `semgrep_scan.json` / `semgrep_scan_corregido.json` — reportes Semgrep (antes/después).
-- `bandit_corregido.json` — Bandit tras corrección (0 hallazgos).
-- `sonarcloud_issues.json` / `sonarcloud_issues_final.json` — issues de SonarCloud (antes/después).
-- `revision_claude.md` — revisión asistida por IA con 14 hallazgos y su análisis.
-- Capturas de pantalla del dashboard de SonarCloud, del Quality Gate y del repositorio
-  (ver `guia_capturas.md`): se adicionan como imágenes adjuntas a este informe.
+| Categoría | CWE/OWASP | Problemas | Herramientas que lo detectaron |
+|---|---|---|---|
+| Criptografía rota (MD5 sin sal) | CWE-327 | 1 | Bandit, SonarCloud, IA |
+| Inyección SQL | CWE-89 / A03 | 2 (login y búsqueda) | Bandit, Semgrep, IA |
+| Configuración peligrosa (debug, 0.0.0.0, CSRF off) | CWE-605/A05, A07 | 3 | Bandit, Semgrep, SonarCloud, IA |
+| Secretos en el código | CWE-259 | 2 (SECRET_KEY, credenciales admin) | Bandit, IA |
+| CSRF sin token en formularios | A01 | 4 formularios | Semgrep, SonarCloud, IA |
+| NaN injection | CWE-20 | 1 | Semgrep, IA |
+| Errores de programación | — | 2 | IA, Pylint |
+| Accesibilidad / calidad | WCAG | 1 | SonarCloud, Pylint |
 
----
-
-## 7. Conclusiones y aprendizajes
-
-1. **El análisis estático encuentra lo que las pruebas funcionales no ven.** La app "funcionaba",
-   pero tenía una inyección SQL que permitía entrar como *admin* sin contraseña.
-2. **Las herramientas se complementan:** Bandit (seguridad Python), Semgrep (reglas), SonarCloud
-   (calidad global + Quality Gate), pylint (estilo) y la revisión por IA (lógica de negocio)
-   detectaron en conjunto **más problemas que cualquiera por separado**.
-3. **Los falsos positivos existen** (reglas Django sobre plantillas Flask en Semgrep): es necesario
-   interpretar los resultados, no copiarlos.
-4. **La corrección es medible:** se pasó de 7 hallazgos de Bandit y 8 vulnerabilidades de SonarCloud
-   a **0** en ambos, sin romper la funcionalidad (pruebas de humo verificadas).
-5. **Automatizar el análisis** (SonarCloud en cada *push*) convierte la seguridad en un proceso
-   continuo, no en una revisión puntual.
-6. **Buena práctica aprendida:** nunca guardar secretos en el código, siempre parametrizar SQL y
-   usar funciones de hash seguras con salt.
+**Conclusión del registro:** el programa original presenta problemas en 5 de las 10 categorías
+principales de OWASP (A01-A07), siendo los más graves la criptografía rota y las dos inyecciones
+SQL explotables (permite acceder como *admin* con `' OR '1'='1` sin contraseña). Ninguna prueba
+funcional "normal" los detectaría; solo el análisis estático y la revisión sistemática.
 
 ---
 
-## 8. Referencias
+## 7. Reflexión sobre las herramientas (aprendizaje)
+
+1. **Se complementan:** Bandit detectó los 7 problemas de seguridad Python de un vistazo;
+   Semgrep amplió con NaN injection y CSRF; SonarCloud dio el mapa completo con severidades y
+   calidad; la IA explicó el "porqué" y detectó errores lógicos (C9) que los SAST no ven.
+2. **Los falsos positivos existen:** el aviso `django-no-csrf-token` de Semgrep aplica reglas de
+   Django sobre plantillas de Flask. Hay que interpretar y contrastar, no copiar reportes.
+3. **Varias reglas marcan lo mismo:** Semgrep reportó 16 hallazgos que corresponden a ~8 problemas
+   reales (duplicación django/flask/sqlalchemy); la deduplicación requiere criterio.
+4. **Es reproducible:** al volver a publicar el código original, SonarCloud reabrió exactamente las
+   mismas issues, confirmando la validez del registro.
+
+---
+
+## 8. Conclusiones
+
+1. **El análisis estático encuentra lo que las pruebas funcionales no ven.** El programa "funcionaba",
+   pero contenía criptografía rota y dos inyecciones SQL explotables (acceso como *admin* sin clave).
+2. **El objetivo del trabajo se cumplió:** se investigaron y aplicaron 3+ herramientas y se **registró
+   el problema que presenta el programa original** (7 + 16 + 6 + 14 hallazgos), con tipo, severidad,
+   ubicación, explicación y corrección recomendada.
+3. **Ninguna herramienta es infalible ni total:** cruzando varias (SAST + SonarCloud + IA) se logra
+   cobertura y contexto; también aparecen falsos positivos que exigen criterio profesional.
+4. **El alcance fue solo la identificación:** no se modificó el programa original; las soluciones
+   recomendadas quedan documentadas en el registro como siguiente paso del ciclo de desarrollo.
+5. **Automatizar el análisis** (SonarCloud en cada push) convierte la seguridad en un proceso continuo.
+
+---
+
+## 9. Referencias
 
 - Bandit — PyCQA: https://bandit.readthedocs.io/ — https://github.com/PyCQA/bandit
 - Semgrep: https://semgrep.dev/docs/ — reglas: https://semgrep.dev/explore
 - SonarCloud (SonarQube Cloud): https://sonarcloud.io/ — https://www.sonarsource.com/
 - Flask-WTF / CSRF: https://flask-wtf.readthedocs.io/
+- OWASP Top 10: https://owasp.org/www-project-top-ten
 - Repositorio del trabajo: https://github.com/bgrez-lab/gestion-productos-seguridad
